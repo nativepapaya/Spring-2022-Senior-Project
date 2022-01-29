@@ -6,3 +6,4 @@ Repository for Spring 2022 Senior Project
 * Kyle Evangelisto
 * Ricky Hankey
 * Nasim Tukhi
+* Malcolm Council
