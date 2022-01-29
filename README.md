@@ -5,3 +5,4 @@ Repository for Spring 2022 Senior Project
 * Rayniery Hidalgo (Team Lead)
 * Kyle Evangelisto
 * Ricky Hankey
+* Nasim Tukhi
