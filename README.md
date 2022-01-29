@@ -7,3 +7,4 @@ Repository for Spring 2022 Senior Project
 * Ricky Hankey
 * Nasim Tukhi
 * Malcolm Council
+* Jayvee Lacasandile
