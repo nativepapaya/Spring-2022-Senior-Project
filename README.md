@@ -8,3 +8,4 @@ Repository for Spring 2022 Senior Project
 * Nasim Tukhi
 * Malcolm Council
 * Jayvee Lacasandile
+* Ryan Schwegel
