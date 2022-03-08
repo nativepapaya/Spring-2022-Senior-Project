@@ -1,15 +1,11 @@
 from tkinter import CASCADE
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
-
-# Create your models here.
-
 class Profile(models.Model):
   id = models.AutoField(primary_key=True)
   user_id = models.ForeignKey(
     settings.AUTH_USER_MODEL,
-    on_delete=models.CASCADE
+    on_delete=models.CASCADE #on user deletion, profile will cascade delete
   )
   avatar = models.TextField(null=True)
   pronouns = models.CharField(
@@ -25,3 +21,6 @@ class Profile(models.Model):
 
   def getId(self):
     return self.id
+  
+  def getAvatar(self):
+    return self.avatar
