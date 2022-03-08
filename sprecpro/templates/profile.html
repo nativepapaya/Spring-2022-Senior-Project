@@ -1,0 +1,9 @@
+{% extends 'layouts/app.html' %}
+
+{% block content %}
+  <img src="{{ profile.avatar }}"></img>
+  <span>{{ profile.last_played_uid }}</span>
+  <span>{{ user.first_name }}</span>
+  <span>{{ top_song }}</span>
+  <span>{{ profile.created_at }}</span>
+{% endblock %}
