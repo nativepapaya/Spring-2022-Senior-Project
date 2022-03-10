@@ -1,5 +1,31 @@
 {% extends 'layouts/app.html' %}
 
 {% block content %}
-  <h1>Login Page</h1>
+
+  <section>
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card shadow-2-strong" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+              <h2 class="mb-5">Log in to SPRecPro with Spotify</h2>
+              <a class="btn btn-lg btn-success" 
+                href="{% url "social:begin" "spotify" %}" 
+                id="spotifyButton">
+                <i class="bi bi-spotify"></i>
+                Login 
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    body {
+      background: linear-gradient(90deg, hsla(203, 35%, 56%, 1) 34%, hsla(295, 92%, 76%, 1) 96%); 
+    }
+  </style>
+
 {% endblock %}
