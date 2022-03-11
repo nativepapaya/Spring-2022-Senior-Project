@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import *
@@ -23,6 +24,16 @@ def login(request):
 def register(request):
   return render(request, 'register_page.html', {})
 
+#------------------------------------
+def favorites(request):
+  if not request.user.is_authenticated:
+    return redirect('login')
+
+  #If not a spotify user (super user), redirect to welcome
+  if request.user.is_staff:
+    return render(request, 'favorites.html', {})
+#------------------------------------------
+
 def profile(request, user_id):
   #If the user is not logged in
   if not request.user.is_authenticated:
@@ -35,7 +46,7 @@ def profile(request, user_id):
   #Find the user's profile who's id matches the passed id in the route
   #Find the user whos's id was passed in the route, and validate they arent a super user
   profile = Profile.objects.filter(user_id = user_id).first()
-  user = User.objects.filter(id = user_id, is_staff = False).first()
+  user = user.objects.filter(id = user_id, is_staff = False).first()
 
   #If there is no profile and the user exists, create a profile
   if user is not None:

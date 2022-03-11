@@ -24,3 +24,19 @@ class Profile(models.Model):
   
   def getAvatar(self):
     return self.avatar
+
+
+
+
+class Favorites(models.Model):
+  fav_id = models.AutoField(primary_key=True)
+  profile_id = models.ForeignKey(
+    Profile.getId(),
+    on_delete=models.CASCADE #on user deletion, profile will cascade delete
+  )
+  last_played_uid = models.TextField(null=True) #represents the id of the last spotify track played
+  created_at = models.DateTimeField(auto_now_add=True)
+  edited_at = models.DateTimeField(auto_now=True)
+  
+  def getFavID(self):
+        return self.fav_id

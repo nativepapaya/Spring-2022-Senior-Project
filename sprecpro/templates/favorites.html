@@ -1,0 +1,22 @@
+{% extends 'layouts/app.html' %}
+
+{% block content %}
+    <img src="{{ profile.avatar }}"></img>
+    <span>{{ user.first_name }}</span>
+
+    <h2>Favorties</h2>
+    {% if favorites %}
+        <table class="table">
+        <tbody>
+        <tr>
+        {% for favorite in favorites %}
+            <td>
+                <iframe src="https://open.spotify.com/embed/track/{{ fav_id }}" width="300" height="380" 
+                frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            </td>
+        {% endfor %}
+        </tr>
+        </tbody>
+        </table>   
+    {% endif %}
+{% endblock %}

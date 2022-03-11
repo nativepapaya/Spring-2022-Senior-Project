@@ -2,6 +2,7 @@
 /teamenv/*
 teamenv/*
 teamenv/
+myenv/
 
 *.log
 *.pot
