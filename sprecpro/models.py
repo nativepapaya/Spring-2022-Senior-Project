@@ -28,10 +28,10 @@ class Profile(models.Model):
 
 
 
-class Favorites(models.Model):
-  fav_id = models.AutoField(primary_key=True)
-  profile_id = models.ForeignKey(
-    Profile.getId(),
+class Favorite(models.Model):
+  id = models.AutoField(primary_key=True)
+  user_id = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE #on user deletion, profile will cascade delete
   )
   last_played_uid = models.TextField(null=True) #represents the id of the last spotify track played
