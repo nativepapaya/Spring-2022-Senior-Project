@@ -47,14 +47,14 @@ def profile(request, user_id):
       )
     
     #get the users most recently played song and set uid field
-    song_data = getUserSongData(request.user)
-    setattr(profile, 'last_played_uid', song_data['last_played'])
-    profile.save()
+    #   song_data = getUserSongData(request.user)
+    #   setattr(profile, 'last_played_uid', song_data['last_played'])
+    #   profile.save()
 
     #return the view with the user's profile information
     return render(request, 'profile.html', {
       'profile' : profile,
-      'top_song': song_data['top_song']
+      #   'top_song': song_data['top_song']
     })
   
   #if the user doesn't exist, go back to welcome
