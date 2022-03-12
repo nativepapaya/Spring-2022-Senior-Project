@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger 
 from .models import *
 import requests
 import json
@@ -23,6 +24,18 @@ def login(request):
 
 def register(request):
   return render(request, 'register_page.html', {})
+
+def explore(request):
+  numbers_list = range(1,1000)
+  page = request.GET.get('page',1)
+  paginator = Paginator(numbers_list, 100)
+  try:
+    numbers = paginator.page(page)
+  except PageNotAnInteger:
+    numbers = paginator.page(1)
+  except EmptyPage:
+    numbers = paginator.page(paginator.num_pages)
+  return render(request, 'explore.html', {'numbers': numbers})
 
 def profile(request, user_id):
   #If the user is not logged in
