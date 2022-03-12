@@ -46,7 +46,7 @@ def profile(request, user_id):
   #Find the user's profile who's id matches the passed id in the route
   #Find the user whos's id was passed in the route, and validate they arent a super user
   profile = Profile.objects.filter(user_id = user_id).first()
-  user = user.objects.filter(id = user_id, is_staff = False).first()
+  user = User.objects.filter(id = user_id, is_staff = False).first()
 
   #If there is no profile and the user exists, create a profile
   if user is not None:
@@ -57,14 +57,14 @@ def profile(request, user_id):
       )
     
     #get the users most recently played song and set uid field
-    song_data = getUserSongData(request.user)
-    setattr(profile, 'last_played_uid', song_data['last_played'])
-    profile.save()
+    #song_data = getUserSongData(request.user)
+    #setattr(profile, 'last_played_uid', song_data['last_played'])
+    #profile.save()
 
     #return the view with the user's profile information
     return render(request, 'profile.html', {
       'profile' : profile,
-      'top_song': song_data['top_song']
+      #'top_song': song_data['top_song']
     })
   
   #if the user doesn't exist, go back to welcome
