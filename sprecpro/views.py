@@ -51,12 +51,14 @@ def profile(request, user_id):
   #If there is no profile and the user exists, create a profile
   if user is not None:
     if profile is None:
+      
       Profile.objects.create(
         user_id = request.user,
-        avatar = getProfilePhoto(request.user),
+        avatar = getProfilePhoto(request.user)
       )
     
     #get the users most recently played song and set uid field
+<<<<<<< HEAD
     #song_data = getUserSongData(request.user)
     #setattr(profile, 'last_played_uid', song_data['last_played'])
     #profile.save()
@@ -66,6 +68,22 @@ def profile(request, user_id):
       'profile' : profile,
       #'top_song': song_data['top_song']
     })
+=======
+    try:
+      song_data = getUserSongData(request.user)
+      setattr(profile, 'last_played_uid', song_data['last_played'])
+      profile.save()
+      #return the view with the user's profile information
+      return render(request, 'profile.html', {
+        'profile' : profile,
+        'top_song': song_data['top_song']
+      })
+    except:
+      #return the view with the user's profile information (no top song)
+      return render(request, 'profile.html', {
+        'profile' : profile,
+      })
+>>>>>>> 45ab59befb88c3443e72623458f46731cdd611c7
   
   #if the user doesn't exist, go back to welcome
   return redirect('welcome')
@@ -88,7 +106,11 @@ def getProfilePhoto(user):
   data = json.loads(text)
 
   #parse the results and return the users photo
-  photo = data['images'][0]['url']
+  try:
+    photo = data['images'][0]['url']
+  except:
+    photo = None
+
   return photo
 
 def getUserSongData(user):
@@ -107,8 +129,10 @@ def getUserSongData(user):
   data = json.loads(text)
 
   #parses the json data and stores the top song
-  top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
-
+  try:
+    top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
+  except:
+    top_song = None
   #sends a request to the endpoint with filters for getting the users most recently listened to song
   response = requests.get(
     url = "	https://api.spotify.com/v1/me/player/recently-played?limit=1",
@@ -121,7 +145,10 @@ def getUserSongData(user):
   data = json.loads(text)
 
   #parses the data and stores the last played song
-  last_played = data['items'][0]['track']['id']
+  try:
+    last_played = data['items'][0]['track']['id']
+  except:
+    last_played = None
 
   return {
     'top_song' : top_song,
