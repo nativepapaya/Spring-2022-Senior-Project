@@ -24,6 +24,16 @@ def login(request):
 def register(request):
   return render(request, 'register_page.html', {})
 
+#------------------------------------
+def favorites(request):
+  #if not request.user.is_authenticated:
+  #  return redirect('login')
+
+  #If not a spotify user (super user), redirect to welcome
+  #if request.user.is_staff:
+    return render(request, 'favorites.html', {})
+#------------------------------------------
+
 def profile(request, user_id):
   #If the user is not logged in
   if not request.user.is_authenticated:
@@ -41,9 +51,10 @@ def profile(request, user_id):
   #If there is no profile and the user exists, create a profile
   if user is not None:
     if profile is None:
+      
       Profile.objects.create(
         user_id = request.user,
-        avatar = getProfilePhoto(request.user),
+        avatar = getProfilePhoto(request.user)
       )
     
     #get the users most recently played song and set uid field
@@ -78,7 +89,11 @@ def getProfilePhoto(user):
   data = json.loads(text)
 
   #parse the results and return the users photo
-  photo = data['images'][0]['url']
+  try:
+    photo = data['images'][0]['url']
+  except:
+    photo = None
+
   return photo
 
 def getUserSongData(user):
@@ -97,8 +112,10 @@ def getUserSongData(user):
   data = json.loads(text)
 
   #parses the json data and stores the top song
-  top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
-
+  try:
+    top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
+  except:
+    top_song = None
   #sends a request to the endpoint with filters for getting the users most recently listened to song
   response = requests.get(
     url = "	https://api.spotify.com/v1/me/player/recently-played?limit=1",
@@ -111,7 +128,10 @@ def getUserSongData(user):
   data = json.loads(text)
 
   #parses the data and stores the last played song
-  last_played = data['items'][0]['track']['id']
+  try:
+    last_played = data['items'][0]['track']['id']
+  except:
+    last_played = None
 
   return {
     'top_song' : top_song,
