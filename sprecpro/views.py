@@ -25,13 +25,25 @@ def register(request):
   return render(request, 'register_page.html', {})
 
 #------------------------------------
-def favorites(request):
-  #if not request.user.is_authenticated:
-  #  return redirect('login')
+def favorites(request, user_id):
+  if not request.user.is_authenticated:
+    return redirect('login')
 
   #If not a spotify user (super user), redirect to welcome
-  #if request.user.is_staff:
-    return render(request, 'favorites.html', {})
+  if request.user.is_staff:
+    return redirect('welcome')
+  
+  #The user and profile whos favorites this page belongs to
+  profile = Profile.objects.filter(user_id = user_id).first()
+  user = User.objects.filter(id = user_id, is_staff = False).first()
+
+  if profile is None or user is None:
+    return redirect('welcome')
+
+  return render(request, 'favorites.html', {
+    'user': user,
+    'profile': profile,
+  })
 #------------------------------------------
 
 def profile(request, user_id):
