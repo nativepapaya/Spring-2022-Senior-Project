@@ -78,10 +78,13 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-sm-3">
-                      <h6 class="mb-0">Full Name</h6>
+                      <h6 class="mb-0">Spotify Name</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                      Kenneth Valdez
+                      <!--We access the name THIS WAY because this gets the name of the user who owns the profile
+                        user.first_name access the AUTHENTICATED users name
+                       -->
+                      {{ profile.user_id.first_name }}
                     </div>
                   </div>
                   <hr>
@@ -108,7 +111,7 @@
                       <h6 class="mb-0">Last Played</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                      {{ profile.last_played_uid }}
+                      {{ last_played_name }}
                     </div>
                   </div>
                 </div>

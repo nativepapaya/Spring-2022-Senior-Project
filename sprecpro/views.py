@@ -78,7 +78,8 @@ def profile(request, user_id):
     #return the view with the user's profile information
     return render(request, 'profile.html', {
       'profile' : profile,
-      'top_song': song_data['top_song']
+      'top_song': song_data['top_song'],
+      'last_played_name': song_data['last_played_name']
     })
   
   #if the user doesn't exist, go back to welcome
@@ -98,27 +99,14 @@ def editpr(request, user_id):
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
 
-  #If there is no profile and the user exists, create a profile
-  if user is not None:
-    if profile is None:
-      currentUser = request.user
-      targetUser = User.objects.filter(user_id = user_id).first()
-      if currentUser != targetUser:
-        return redirect('wecome')
-    
-    #get the users most recently played song and set uid field
-    try:
-      song_data = getUserSongData(request.user)
-      setattr(profile, 'last_played_uid', song_data['last_played'])
-      profile.save()
-      #return the view with the edit profile interface
-      return render(request, 'editpr.html', {'profile' : profile, 'top_song': song_data['top_song']})
-    except:
-      #return the view with the edit interface (no top song)
-      return render(request, 'editpr.html', {'profile' : profile, 'top_song': song_data['top_song']})
+  if user is None:
+    return redirect('welcome')
   
-  #if the user doesn't exist, go back to welcome
-  return redirect('welcome')
+  #If someone tries to edit another users edit profile page
+  if request.user != user:
+    return redirect('welcome')
+  
+  return render(request, 'editpr.html', {})
   
 def getProfilePhoto(user):
   #access the users spotify id and access token
@@ -162,9 +150,9 @@ def getUserSongData(user):
 
   #parses the json data and stores the top song
   try:
-    top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
+    top_song = data['items'][0]['artists'][0]['name'] + ': ' + data['items'][0]['name']
   except:
-    top_song = None
+    top_song = 'Could not find at this time!'
   #sends a request to the endpoint with filters for getting the users most recently listened to song
   response = requests.get(
     url = "	https://api.spotify.com/v1/me/player/recently-played?limit=1",
@@ -179,10 +167,13 @@ def getUserSongData(user):
   #parses the data and stores the last played song
   try:
     last_played = data['items'][0]['track']['id']
+    last_played_name = data['items'][0]['track']['artists'][0]['name'] + ': ' + data['items'][0]['track']['name']
   except:
-    last_played = None
+    last_played = 'Could not find at this time!'
+    last_played_name = 'Could not find at this time!'
 
   return {
     'top_song' : top_song,
-    'last_played': last_played
+    'last_played': last_played,
+    'last_played_name': last_played_name
   }
