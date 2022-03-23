@@ -9,6 +9,9 @@ import json
 def welcome(request):
   return render(request, 'welcome.html', {})
 
+def posts(request):
+  return render(request, 'posts.html')
+
 def home(request):
   if not request.user.is_authenticated: 
     return redirect('login')
