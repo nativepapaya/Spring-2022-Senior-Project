@@ -24,6 +24,28 @@ def login(request):
 def register(request):
   return render(request, 'register_page.html', {})
 
+#------------------------------------
+def favorites(request, user_id):
+  if not request.user.is_authenticated:
+    return redirect('login')
+
+  #If not a spotify user (super user), redirect to welcome
+  if request.user.is_staff:
+    return redirect('welcome')
+  
+  #The user and profile whos favorites this page belongs to
+  profile = Profile.objects.filter(user_id = user_id).first()
+  user = User.objects.filter(id = user_id, is_staff = False).first()
+
+  if profile is None or user is None:
+    return redirect('welcome')
+
+  return render(request, 'favorites.html', {
+    'user': user,
+    'profile': profile,
+  })
+#------------------------------------------
+
 def profile(request, user_id):
   #If the user is not logged in
   if not request.user.is_authenticated:
@@ -48,20 +70,15 @@ def profile(request, user_id):
       )
     
     #get the users most recently played song and set uid field
-    try:
-      song_data = getUserSongData(request.user)
-      setattr(profile, 'last_played_uid', song_data['last_played'])
-      profile.save()
-      #return the view with the user's profile information
-      return render(request, 'profile.html', {
-        'profile' : profile,
-        'top_song': song_data['top_song']
-      })
-    except:
-      #return the view with the user's profile information (no top song)
-      return render(request, 'profile.html', {
-        'profile' : profile,
-      })
+    song_data = getUserSongData(request.user)
+    setattr(profile, 'last_played_uid', song_data['last_played'])
+    profile.save()
+
+    #return the view with the user's profile information
+    return render(request, 'profile.html', {
+      'profile' : profile,
+      'top_song': song_data['top_song']
+    })
   
   #if the user doesn't exist, go back to welcome
   return redirect('welcome')
