@@ -2,9 +2,11 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger 
 from .models import *
 import requests
 import json
+import random
 
 def welcome(request):
   return render(request, 'welcome.html', {})
@@ -26,6 +28,24 @@ def login(request):
 
 def register(request):
   return render(request, 'register_page.html', {})
+
+def explore(request):
+  numbers_list = [None] * 1000
+  usernames = ["insidenecktie","winningincomplete","emitbedrock",
+              "dangerportfolio","reindeerlittle","negligiblelack",
+              "labwould","axelead"]
+  for n in range(0,len(numbers_list)-1):
+    numbers_list[n] = usernames[random.randint(0, len(usernames)-1)]
+
+  page = request.GET.get('page',1)
+  paginator = Paginator(numbers_list, 7)
+  try:
+    numbers = paginator.page(page)
+  except PageNotAnInteger:
+    numbers = paginator.page(1)
+  except EmptyPage:
+    numbers = paginator.page(paginator.num_pages)
+  return render(request, 'explore.html', {'numbers': numbers})
 
 def favorites(request, user_id):
   if not request.user.is_authenticated:
