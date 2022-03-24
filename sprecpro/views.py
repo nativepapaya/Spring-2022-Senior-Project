@@ -10,6 +10,9 @@ import json
 def welcome(request):
   return render(request, 'welcome.html', {})
 
+def posts(request):
+  return render(request, 'posts.html')
+
 def home(request):
   if not request.user.is_authenticated: 
     return redirect('login')
@@ -37,6 +40,26 @@ def explore(request):
     numbers = paginator.page(paginator.num_pages)
   return render(request, 'explore.html', {'numbers': numbers})
 
+def favorites(request, user_id):
+  if not request.user.is_authenticated:
+    return redirect('login')
+
+  #If not a spotify user (super user), redirect to welcome
+  if request.user.is_staff:
+    return redirect('welcome')
+  
+  #The user and profile whos favorites this page belongs to
+  profile = Profile.objects.filter(user_id = user_id).first()
+  user = User.objects.filter(id = user_id, is_staff = False).first()
+
+  if profile is None or user is None:
+    return redirect('welcome')
+
+  return render(request, 'favorites.html', {
+    'user': user,
+    'profile': profile,
+  })
+
 def profile(request, user_id):
   #If the user is not logged in
   if not request.user.is_authenticated:
@@ -61,23 +84,42 @@ def profile(request, user_id):
       )
     
     #get the users most recently played song and set uid field
-    try:
-      song_data = getUserSongData(request.user)
-      setattr(profile, 'last_played_uid', song_data['last_played'])
-      profile.save()
-      #return the view with the user's profile information
-      return render(request, 'profile.html', {
-        'profile' : profile,
-        'top_song': song_data['top_song']
-      })
-    except:
-      #return the view with the user's profile information (no top song)
-      return render(request, 'profile.html', {
-        'profile' : profile,
-      })
+    song_data = getUserSongData(request.user)
+    setattr(profile, 'last_played_uid', song_data['last_played'])
+    profile.save()
+
+    #return the view with the user's profile information
+    return render(request, 'profile.html', {
+      'profile' : profile,
+      'top_song': song_data['top_song'],
+      'last_played_name': song_data['last_played_name']
+    })
   
   #if the user doesn't exist, go back to welcome
   return redirect('welcome')
+
+def editpr(request, user_id):
+  #If the user is not logged in
+  if not request.user.is_authenticated:
+    return redirect('login')
+
+  #If not a spotify user (super user), redirect to welcome
+  if request.user.is_staff:
+    return redirect('welcome')
+
+  #Find the user's profile who's id matches the passed id in the route
+  #Find the user whos's id was passed in the route, and validate they arent a super user
+  profile = Profile.objects.filter(user_id = user_id).first()
+  user = User.objects.filter(id = user_id, is_staff = False).first()
+
+  if user is None:
+    return redirect('welcome')
+  
+  #If someone tries to edit another users edit profile page
+  if request.user != user:
+    return redirect('welcome')
+  
+  return render(request, 'editpr.html', {})
   
 def getProfilePhoto(user):
   #access the users spotify id and access token
@@ -121,9 +163,9 @@ def getUserSongData(user):
 
   #parses the json data and stores the top song
   try:
-    top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
+    top_song = data['items'][0]['artists'][0]['name'] + ': ' + data['items'][0]['name']
   except:
-    top_song = None
+    top_song = 'Could not find at this time!'
   #sends a request to the endpoint with filters for getting the users most recently listened to song
   response = requests.get(
     url = "	https://api.spotify.com/v1/me/player/recently-played?limit=1",
@@ -138,10 +180,13 @@ def getUserSongData(user):
   #parses the data and stores the last played song
   try:
     last_played = data['items'][0]['track']['id']
+    last_played_name = data['items'][0]['track']['artists'][0]['name'] + ': ' + data['items'][0]['track']['name']
   except:
-    last_played = None
+    last_played = 'Could not find at this time!'
+    last_played_name = 'Could not find at this time!'
 
   return {
     'top_song' : top_song,
-    'last_played': last_played
+    'last_played': last_played,
+    'last_played_name': last_played_name
   }
