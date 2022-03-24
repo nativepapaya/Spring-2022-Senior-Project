@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import *
 import requests
 import json
+import random
 
 def welcome(request):
   return render(request, 'welcome.html', {})
@@ -29,9 +30,15 @@ def register(request):
   return render(request, 'register_page.html', {})
 
 def explore(request):
-  numbers_list = range(1,1000)
+  numbers_list = [None] * 1000
+  usernames = ["insidenecktie","winningincomplete","emitbedrock",
+              "dangerportfolio","reindeerlittle","negligiblelack",
+              "labwould","axelead"]
+  for n in range(0,len(numbers_list)-1):
+    numbers_list[n] = usernames[random.randint(0, len(usernames)-1)]
+
   page = request.GET.get('page',1)
-  paginator = Paginator(numbers_list, 100)
+  paginator = Paginator(numbers_list, 7)
   try:
     numbers = paginator.page(page)
   except PageNotAnInteger:
