@@ -66,6 +66,15 @@ def favorites(request, user_id):
     'user': user,
     'profile': profile,
   })
+  
+def likedSongs(request, user_id):
+  user = User.objects.filter(id = user_id, is_staff = False).first()
+  playlist_id = "https://open.spotify.com/collection/tracks"
+  results = user.playlist_tracks(playlist_id, fields=None, limit=100, offset=0, market=None, additional_types=('track', ))
+  return render(request, 'favorites.html', {
+      'results' : results,
+    })
+  
 
 def profile(request, user_id):
   #If the user is not logged in
