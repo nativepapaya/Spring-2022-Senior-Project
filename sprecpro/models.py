@@ -55,6 +55,13 @@ class Post(models.Model):
   created_at = models.DateTimeField(auto_now_add=True),
   updated_at = models.DateTimeField(auto_now=True),
 
+  def isLiked(self, user):
+    like = Like.objects.filter(user_id = user, post_id = self).first()
+    return like != None
+
+  def getLikes(self):
+    return len(Like.objects.filter(post_id = self))
+
 class Like(models.Model):
   id = models.AutoField(primary_key=True)
   user_id = models.ForeignKey(

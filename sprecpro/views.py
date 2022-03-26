@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls import reverse
 from .models import *
 import requests
 import json
@@ -18,22 +19,17 @@ def register(request):
   return render(request, 'register_page.html', {})
 
 def explore(request):
-  numbers_list = [None] * 1000
-  usernames = ["insidenecktie","winningincomplete","emitbedrock",
-              "dangerportfolio","reindeerlittle","negligiblelack",
-              "labwould","axelead"]
-  for n in range(0,len(numbers_list)-1):
-    numbers_list[n] = usernames[random.randint(0, len(usernames)-1)]
-
+  posts_list = Post.objects.all()
   page = request.GET.get('page',1)
-  paginator = Paginator(numbers_list, 7)
+  paginator = Paginator(posts_list, 7)
+
   try:
-    numbers = paginator.page(page)
+    posts = paginator.page(page)
   except PageNotAnInteger:
-    numbers = paginator.page(1)
+    posts = paginator.page(1)
   except EmptyPage:
-    numbers = paginator.page(paginator.num_pages)
-  return render(request, 'explore.html', {'numbers': numbers})
+    posts = paginator.page(paginator.num_pages)
+  return render(request, 'explore.html', {'posts': posts})
 
 def favorites(request, user_id):
   if not request.user.is_authenticated:
@@ -311,3 +307,26 @@ def storePost(request):
   post.save()
 
   return redirect('home')
+
+#Like post
+def likePost(request, pk):
+  user = request.user
+  post = Post.objects.filter(id=pk)[0]
+  if Like.objects.filter(user_id = user, post_id = post).first() == None:
+    like = Like.objects.create(
+      user_id = user,
+      post_id = post,
+      like_type = 'Like'
+    )
+    like.save()
+  return HttpResponseRedirect(request.POST.get('next', '/'))
+
+#Unlike post
+def unlikePost(request, pk):
+  post = Post.objects.filter(id=pk)[0]
+  like = Like.objects.filter(user_id = request.user, post_id = post).first()
+  if like != None:
+    like.delete()
+  return HttpResponseRedirect(request.POST.get('next', '/'))
+
+
