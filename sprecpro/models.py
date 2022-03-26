@@ -36,12 +36,16 @@ class Favorite(models.Model):
   edited_at = models.DateTimeField(auto_now=True)
   
   def getFavID(self):
-        return self.fav_id
+    return self.fav_id
 
 class Post(models.Model):
   id = models.AutoField(primary_key=True)
   user_id = models.ForeignKey(
     settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE
+  )
+  profile = models.ForeignKey(
+    Profile,
     on_delete=models.CASCADE
   )
   title = models.TextField(null=False, max_length=100)
