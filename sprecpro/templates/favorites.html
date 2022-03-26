@@ -9,17 +9,17 @@
 
     <h2>Favorties</h2>
     <h5> Here is where the list of user favorites will be</h5>
-    {% if likedSongs %}
+    <h5>Favorite songs!</h5>
+    {% if uris %}
         <table class="table">
         <tbody>
         <tr>
-        <!--{% for likedSong in likedSongs %}
+        {% for track in uris %}
             <td>
-                source = likedSongs.
-                <iframe src="https://open.spotify.com/embed/track/{{ fav_id }}" width="300" height="380" 
-                frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                <h5>A random song!</h5>
+                {{ track['name'] }}
             </td>
-        {% endfor %}-->
+        {% endfor %}
         </tr>
         </tbody>
         </table>   

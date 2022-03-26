@@ -70,9 +70,23 @@ def favorites(request, user_id):
 def likedSongs(request, user_id):
   user = User.objects.filter(id = user_id, is_staff = False).first()
   playlist_id = "https://open.spotify.com/collection/tracks"
-  results = user.playlist_tracks(playlist_id, fields=None, limit=100, offset=0, market=None, additional_types=('track', ))
+  results = user.user_playlist_tracks(user, playlist_id)
+  playlist_items = results['items']
+  uris = []
+  
+  while results['next']:
+        results = user.next(results)
+        playlist_items.append(results['items'])
+  
+  for item in playlist_items:
+        is_local = item["is_local"]
+        if is_local == True:
+              continue
+        else:
+             track_id = item["track"]["uri"]
+             uris.append(track_id)
   return render(request, 'favorites.html', {
-      'results' : results,
+      'uris' : uris,
     })
   
 
