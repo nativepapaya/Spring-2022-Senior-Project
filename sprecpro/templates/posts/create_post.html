@@ -1,0 +1,89 @@
+{% extends 'layouts/app.html' %}
+
+{% block content %}
+  {%if song_name is None or album_name is None %}
+    <div class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-md-6 mb-2">
+          <h5>First, Search for a Song OR an Album (Optional)</h5>
+          <span>Search by Name</span>
+          <br />
+          <hr />
+          <form type="GET" action="{% url 'post.create.search' %}">
+            {% csrf_token %}
+            <div class="mb-2">
+              <label class="form-label">Song Name</label>
+              <input class="form-control" type="text" name="song_name" id="song_box" placeholder="Song Name"></input>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Artist Name</label>
+              <input class="form-control" type="text" name="artist_name" id="album_box" placeholder="Artist Name"></input>
+            </div>
+            <br />
+            <button class="btn btn-primary">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="container py-2">
+    <div class="row justify-content-center ">
+      <div class="col-md-6 mb-2">
+        <hr />
+        <h5>Create your Post!</h5>
+        <br />
+        <form type="POST" action="{% url 'post.store' %}">
+          <div class="mb-2">
+            <label class="form-label">Title<i style="color: red">*</i></label>
+            <input class="form-control" type="text" name="title" placeholder="A cool song I found!"></input>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" type="text" name="description" placeholder="Description" maxlength="256" oninput="displayCharsLeft(this, 256)"></textarea>
+            <div class="d-inline mb-2" id="charsLeft"></div>
+          </div>
+          <div class="mb-2">
+            {% if song_name %}
+            <span>Your searched song: </span> <br />
+              <iframe src="https://open.spotify.com/embed/track/{{song_id}}" 
+                width="300" height="80" frameborder="0" allowtransparency="true" 
+                allow="encrypted-media">
+              </iframe>
+            {% endif %}
+          </div>
+          <div class="mb-2">
+            {% if album_name %}
+              <span>Your searched song's album: </span> <br />
+              <iframe src="https://open.spotify.com/embed/album/{{album_id}}" 
+                width="300" height="80" frameborder="0" allowtransparency="true" 
+                allow="encrypted-media">
+              </iframe>
+            {% endif %}
+          </div>
+          <div class="mb-2">
+            {% if album_name or song_name %}
+              <span>Not the correct track? </span> <br />
+              <a class="btn btn-primary" href="{% url 'post.create' %}">Search Again</a>
+            {% endif %}
+          </div>
+          <hr />
+          <input type="hidden" name="rec_song_id" value="{{ song_id }}"></input>
+          <input type="hidden" name="rec_album_id" value="{{ album_id }}"></input>
+          <button class="btn btn-primary" type="submit">Post!</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    /**
+    * Take an HTML Input field (textfield, textarea etc) and a char count ex 150
+    * And display the how many chars the user can still type, as they type.
+    */
+    function displayCharsLeft(element, countFrom) {
+      var textInput = element.value.length;
+      var charactersLeft = countFrom - textInput;
+      document.getElementById('charsLeft').innerHTML = "Characters left: " + charactersLeft;
+    }
+  </script>
+{% endblock %}
