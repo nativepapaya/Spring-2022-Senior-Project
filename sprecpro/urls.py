@@ -11,5 +11,7 @@ urlpatterns = [
   path('explore', views.explore, name='explore'),
   path('profile/<user_id>/edit', views.editpr, name='editpr'),
   path('profile/<user_id>/favorites', views.favorites, name='favorite'),
-  path('posts/', views.posts, name='posts')
+  path('post/create', views.createPost, name='post.create'),
+  path('post/create/search', views.searchSpotify, name='post.create.search'),
+  path('post/store', views.storePost, name='post.store')
 ]
