@@ -83,7 +83,10 @@ def editpr(request, user_id):
   #If there is no profile and the user exists, create a profile
   if user is not None:
     if profile is None:
-      Profile.objects.create(user_id = request.user, avatar = getProfilePhoto(request.user))
+      currentUser = request.user
+      targetUser = User.objects.filter(user_id = user_id).first()
+      if currentUser != targetUser:
+        return redirect('wecome')
     
     #get the users most recently played song and set uid field
     try:
