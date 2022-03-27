@@ -1,0 +1,82 @@
+{% extends 'layouts/app.html' %}
+{% load like_tags %}
+{% block content %}
+<div class="container d-flex justify-content-center">
+
+    <!--Filters-->
+    <div class="col-2 bg-dark text-white">
+        Filters:
+    </div>
+
+    <!--Main content-->
+    <div class="infinite-container col-8 bg-light" style="min-height: 100vh">
+
+      <!--Create posts-->
+      {% for post in posts %}
+      <div class="infinite-item">
+        <div class="card">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><img src="{{ post.profile.avatar }}" style="width:32px">
+              <b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</li>
+            <li class="list-group-item">
+                {{ post.description }}
+                <br/>
+                <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            </li>
+            <li class="list-group-item d-flex align-items-center">
+              {% isLiked post user as liked %}
+              {% if liked %}
+              <div style="padding-left:10px" class="d-flex flex-row align-items-center">
+                {% getLikes post %}
+                <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button type="submit" class="btn btn-link" name="post_id" value="{{ post.id }}">Unlike</button>
+                </form>
+              </div>
+              {% else %}
+              <div style="padding-left:10px">
+                <form action="{% url 'like_post' post.pk %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button type="submit" class="btn btn-link" name="post_id" value="{{ post.id }}">Like</button>
+                </form>
+              </div> 
+              {% endif %}
+              <div style="padding-left:10px">Comment</div> 
+              <div style="padding-left:10px">Share</div></li>
+          </ul>
+        </div>
+        <br/>
+      </div>
+      {% endfor %}
+      
+
+      <!--Infinite scroll -->
+      {% if posts.has_next %}
+      <a class="infinite-more-link" href="?page={{ posts.next_page_number }}">More</a>
+      {% endif %}
+
+      <script>
+          var infinite = new Waypoint.Infinite({
+            element: $('.infinite-container')[0]
+          });
+        </script>
+    </div>
+
+
+    <!--Recommended users-->
+    <div class="col-2 bg-dark text-white">
+        <p>Recommended users:</p>
+        <p>user1           +</p>
+        <p>user2           +</p>
+        <p>user3           +</p>
+    </div>
+</div>
+
+<style>
+    body {
+      background: rgb(65, 70, 75); 
+    }
+  </style>
+{% endblock %}

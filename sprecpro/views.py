@@ -2,27 +2,54 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls import reverse
 from .models import *
 import requests
 import json
+import random
 
 def welcome(request):
   return render(request, 'welcome.html', {})
-
-def home(request):
-  if not request.user.is_authenticated: 
-    return redirect('login')
-  
-  if request.user.is_staff:
-    return redirect('welcome')
-
-  return render(request, 'home.html', {})
 
 def login(request):
   return render(request, 'login_page.html', {})
 
 def register(request):
   return render(request, 'register_page.html', {})
+
+def explore(request):
+  posts_list = Post.objects.all()
+  page = request.GET.get('page',1)
+  paginator = Paginator(posts_list, 7)
+
+  try:
+    posts = paginator.page(page)
+  except PageNotAnInteger:
+    posts = paginator.page(1)
+  except EmptyPage:
+    posts = paginator.page(paginator.num_pages)
+  return render(request, 'explore.html', {'posts': posts})
+
+def favorites(request, user_id):
+  if not request.user.is_authenticated:
+    return redirect('login')
+
+  #If not a spotify user (super user), redirect to welcome
+  if request.user.is_staff:
+    return redirect('welcome')
+  
+  #The user and profile whos favorites this page belongs to
+  profile = Profile.objects.filter(user_id = user_id).first()
+  user = User.objects.filter(id = user_id, is_staff = False).first()
+
+  if profile is None or user is None:
+    return redirect('welcome')
+
+  return render(request, 'favorites.html', {
+    'user': user,
+    'profile': profile,
+  })
 
 def profile(request, user_id):
   #If the user is not logged in
@@ -48,20 +75,20 @@ def profile(request, user_id):
       )
     
     #get the users most recently played song and set uid field
-    try:
-      song_data = getUserSongData(request.user)
+    song_data = getUserSongData(request.user)
+    if not song_data['last_played'] == None or song_data['last_played'] == '':
       setattr(profile, 'last_played_uid', song_data['last_played'])
       profile.save()
-      #return the view with the user's profile information
-      return render(request, 'profile.html', {
-        'profile' : profile,
-        'top_song': song_data['top_song']
-      })
-    except:
-      #return the view with the user's profile information (no top song)
-      return render(request, 'profile.html', {
-        'profile' : profile,
-      })
+    
+    user_posts = Post.objects.filter(user_id = user_id)
+
+    #return the view with the user's profile information
+    return render(request, 'profile.html', {
+      'posts': user_posts,
+      'profile' : profile,
+      'top_song': song_data['top_song'],
+      'last_played_name': song_data['last_played_name']
+    })
   
   #if the user doesn't exist, go back to welcome
   return redirect('welcome')
@@ -80,27 +107,14 @@ def editpr(request, user_id):
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
 
-  #If there is no profile and the user exists, create a profile
-  if user is not None:
-    if profile is None:
-      currentUser = request.user
-      targetUser = User.objects.filter(user_id = user_id).first()
-      if currentUser != targetUser:
-        return redirect('wecome')
-    
-    #get the users most recently played song and set uid field
-    try:
-      song_data = getUserSongData(request.user)
-      setattr(profile, 'last_played_uid', song_data['last_played'])
-      profile.save()
-      #return the view with the edit profile interface
-      return render(request, 'editpr.html', {'profile' : profile, 'top_song': song_data['top_song']})
-    except:
-      #return the view with the edit interface (no top song)
-      return render(request, 'editpr.html', {'profile' : profile, 'top_song': song_data['top_song']})
+  if user is None:
+    return redirect('welcome')
   
-  #if the user doesn't exist, go back to welcome
-  return redirect('welcome')
+  #If someone tries to edit another users edit profile page
+  if request.user != user:
+    return redirect('welcome')
+  
+  return render(request, 'editpr.html', {})
   
 def getProfilePhoto(user):
   #access the users spotify id and access token
@@ -144,9 +158,9 @@ def getUserSongData(user):
 
   #parses the json data and stores the top song
   try:
-    top_song = data['items'][0]['artists'][0]['name'] + ', ' + data['items'][0]['name']
+    top_song = data['items'][0]['artists'][0]['name'] + ': ' + data['items'][0]['name']
   except:
-    top_song = None
+    top_song = 'Could not find at this time!'
   #sends a request to the endpoint with filters for getting the users most recently listened to song
   response = requests.get(
     url = "	https://api.spotify.com/v1/me/player/recently-played?limit=1",
@@ -161,10 +175,158 @@ def getUserSongData(user):
   #parses the data and stores the last played song
   try:
     last_played = data['items'][0]['track']['id']
+    last_played_name = data['items'][0]['track']['artists'][0]['name'] + ': ' + data['items'][0]['track']['name']
   except:
-    last_played = None
+    last_played = 'Could not find at this time!'
+    last_played_name = 'Could not find at this time!'
 
   return {
     'top_song' : top_song,
-    'last_played': last_played
+    'last_played': last_played,
+    'last_played_name': last_played_name
   }
+
+##################################
+#Search for a Song via SONG NAME and ARTIST NAME
+#Searching for a Song via this also returns its ALBUM
+##################################
+
+def searchSpotify(request):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+
+  #handle amount of tracks to query based on where the request is coming from
+  if request.path == '/post/create/search':
+    limit = '1' #Limit to 1 track returned
+  else:
+    limit = '10'
+
+  #Validate the inputs
+  song_name = request.GET['song_name']
+  artist_name = request.GET['artist_name']  
+  query_string = song_name + " " + artist_name
+
+  social = request.user.social_auth.get(provider='spotify')
+  token = social.extra_data['access_token']
+  print('https://api.spotify.com/v1/search?q='+query_string+'&type=track&market=ES&limit='+limit)
+
+  response = requests.get(
+    url = 'https://api.spotify.com/v1/search?q='+query_string+'&type=track&market=ES&limit='+limit,
+    headers = {
+      'Authorization': 'Bearer ' + token
+    }
+  )
+  
+  text = response.text
+  data = json.loads(text)
+
+  #Check to see if response has a 401 error (token expired). If it does it will alert the user. 
+  try:
+    if data['error']['status'] == 401:
+      messages.error(request, 'Your access token has expired. Please re-login')
+      return redirect('welcome')
+  except:
+    print("Request success")
+
+  returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
+  returned_song_name = data['tracks']['items'][0]['name']
+  returned_song_id = data['tracks']['items'][0]['id']
+  returned_album_name = data['tracks']['items'][0]['album']['name']
+  returned_album_id = data['tracks']['items'][0]['album']['id']
+
+  #debug info
+  print(
+    "Artist Name: " + returned_main_artist_name + "\n" +
+    "Song Name: " + returned_song_name + "\n" +
+    "Song Id: " + returned_song_id + "\n" +
+    "Album Id: " + returned_album_id + "\n" +
+    "Album Name: " + returned_album_name + "\n"
+  )
+  
+  #Return back to the same page with the now queried song Data!
+  return render(request, 'posts/create_post.html', {
+    'song_name' : returned_song_name,
+    'song_id': returned_song_id,
+    'artist_name': returned_main_artist_name,
+    'album_name': returned_album_name,
+    'album_id': returned_album_id
+  })
+
+
+##################################
+#POSTS
+##################################
+
+#Posts.view
+def home(request):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+  
+  if request.user.is_staff:
+    return redirect('welcome')
+
+  #for now query all posts: this will eventually be followed scoped
+  posts = Post.objects.all()
+
+  return render(request, 'home.html', {
+    'posts': posts
+  })
+
+#Posts.create
+def createPost(request):
+  return render(request, 'posts/create_post.html', {})
+
+#Posts.store
+def storePost(request):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+
+  user = request.user
+  profile = Profile.objects.filter(user_id = user.id).first()
+  title = request.GET['title']
+  body = request.GET['description']
+  rec_song_id = request.GET['rec_song_id']
+  rec_album_id = request.GET['rec_album_id']
+
+  if title == None or  title == '':
+    messages.error(request, 'A title is REQUIRED')
+    return render(request, 'posts/create_post.html', {})
+  
+  if len(body) > 240:
+    messages.error(request, 'Your description was too long')
+    return render(request, 'posts/create_post.html', {})
+
+  post = Post.objects.create(
+    user_id = user,
+    profile = profile,
+    title = title,
+    description = body,
+    rec_song_id = rec_song_id,
+    rec_album_id = rec_album_id
+  )
+  post.save()
+
+  return redirect('home')
+
+#Like post
+def likePost(request, pk):
+  user = request.user
+  post = Post.objects.filter(id=pk)[0]
+  if Like.objects.filter(user_id = user, post_id = post).first() == None:
+    like = Like.objects.create(
+      user_id = user,
+      post_id = post,
+      like_type = 'Like'
+    )
+    like.save()
+  return HttpResponseRedirect(request.POST.get('next', '/'))
+
+#Unlike post
+def unlikePost(request, pk):
+  post = Post.objects.filter(id=pk)[0]
+  like = Like.objects.filter(user_id = request.user, post_id = post).first()
+  if like != None:
+    like.delete()
+  return HttpResponseRedirect(request.POST.get('next', '/'))
+
+

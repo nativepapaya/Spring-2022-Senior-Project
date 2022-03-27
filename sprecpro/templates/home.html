@@ -1,5 +1,42 @@
 {% extends 'layouts/app.html' %}
 
 {% block content %}
-  <span>You are logged in with spotify! {{ user.first_name }}</span>
+  <div class="container py-2">
+    <a class="btn btn-primary" href="{% url 'post.create' %}">Create Post</a>
+    {%if posts%}
+      {% for post in posts %}
+        <div class="row justify-content-center d-flex">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header">
+                <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                <span><b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</span>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <p class="card-text">{{ post.description }}</p>
+                <div class="mb-2">
+                  {% if post.rec_song_id %}
+                    <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
+                      width="300" height="80" frameborder="0" allowtransparency="true" 
+                      allow="encrypted-media">
+                    </iframe>
+                  {% endif %}
+                </div>
+                <div class="mb-2">
+                  {% if post.rec_album_id %}
+                    <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
+                      width="300" height="80" frameborder="0" allowtransparency="true" 
+                      allow="encrypted-media">
+                    </iframe>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br />
+      {% endfor %}
+    {% endif %}
+  </div>
 {% endblock %}
