@@ -11,7 +11,9 @@
     <h5> Here is where the list of user favorites will be</h5>
     <br/><br/>
 
-    <h3>Hard coded</h3>
+    <h3>The adding to favorites is hardcoded in views.py
+        <br/>delete from favorites is more dynamic since it deletes anything in the table
+    </h3>
 
     <form method="POST" action="{% url 'add_fav'%}">
         {% csrf_token %}
