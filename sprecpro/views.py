@@ -43,7 +43,7 @@ def favorites(request, user_id):
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
 
-  display_all_favorites = Favorite.objects.all()
+  display_all_favorites = Favorite.objects.filter(user_id=user)
 
   if profile is None or user is None:
     return redirect('welcome')
@@ -56,20 +56,23 @@ def favorites(request, user_id):
 
 def addToFavorites(request):
   user = request.user
-  id = '3GqjF1xQKcL0BTCtbGDQwn'
+  song_uid = '3GqjF1xQKcL0BTCtbGDQwn'
   song = 'Love Me Sexy'
 
   favorited = Favorite.objects.create(
     user_id = user,
-    song_uid = id,
+    song_uid = song_uid,
     song_name = song
   )
   favorited.save()
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def deleteFromFavorites(request, id):
-  favorited = Favorite.objects.get(id = id)
-  favorited.delete()
+  favorited = Favorite.objects.filter(id = id).first()
+
+  if favorited != None:
+    favorited.delete()
+
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def profile(request, user_id):
