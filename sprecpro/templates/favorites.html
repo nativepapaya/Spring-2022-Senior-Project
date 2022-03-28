@@ -9,6 +9,7 @@
 
     <h2>Favorties</h2>
     <h5> Here is where the list of user favorites will be</h5>
+<<<<<<< HEAD
     <h5>Favorite songs!</h5>
     {% if songs %}
         <table class="table">
@@ -23,4 +24,53 @@
         </tbody>
         </table>   
     {% endif %}
+=======
+    <br/><br/>
+
+    <h3>The adding to favorites is hardcoded in views.py
+        <br/>delete from favorites is more dynamic since it deletes anything in the table
+    </h3>
+
+    <form method="POST" action="{% url 'add_fav'%}">
+        {% csrf_token %}
+        <iframe style="border-radius:12px" 
+            src="https://open.spotify.com/embed/track/3GqjF1xQKcL0BTCtbGDQwn" 
+            width="300" height="80" frameBorder="0" allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+        </iframe>
+        <input class="btn btn-default btn-danger" type="submit" value="Fav it"/>
+    </form>
+
+    <br/><br/>
+    <center>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">primary_key</th>
+                    <th scope="col">song_uid</th>
+                    <th scope="col">song_name</th>
+                    <th scope="col">created_at</th>
+                    <th scope="col">edited_at</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for favorite in favorites %}                
+                <tr>
+                    <th scope="row">{{ favorite.id }}</th>
+                    <td>{{ favorite.song_uid }}</td>
+                    <td>{{ favorite.song_name }}</td>
+                    <td>{{ favorite.created_at }}</td>
+                    <td>{{ favorite.edited_at }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'delete_fav' favorite.id %}">
+                            {% csrf_token %}
+                            <input class="btn btn-default btn-danger" type="submit" value="Delete"/>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </center>
+>>>>>>> 8e396674dcf85a819073d92448b4b932889cd5b3
 {% endblock %}
