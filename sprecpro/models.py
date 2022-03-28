@@ -26,7 +26,8 @@ class Profile(models.Model):
     return self.avatar
 
 class Favorite(models.Model):
-  id = models.AutoField(primary_key=True)
+  id = models.AutoField(primary_key=True) #id of the favorite
+  song_uid = models.TextField(null=False)
   user_id = models.ForeignKey(
     settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE #on user deletion, profile will cascade delete

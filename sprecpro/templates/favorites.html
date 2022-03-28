@@ -10,16 +10,15 @@
     <h2>Favorties</h2>
     <h5> Here is where the list of user favorites will be</h5>
     <h5>Favorite songs!</h5>
-    {% if uris %}
+    {% if songs %}
         <table class="table">
         <tbody>
         <tr>
-        {% for track in uris %}
+        <!--{% for song in songs %}-->
             <td>
                 <h5>A random song!</h5>
-                {{ track['name'] }}
             </td>
-        {% endfor %}
+        <!--{% endfor %}-->
         </tr>
         </tbody>
         </table>   

@@ -35,6 +35,9 @@ def explore(request):
     numbers = paginator.page(paginator.num_pages)
   return render(request, 'explore.html', {'numbers': numbers})
 
+##--------------------------
+## FAVORITES
+##--------------------------
 def favorites(request, user_id):
   if not request.user.is_authenticated:
     return redirect('login')
@@ -57,25 +60,14 @@ def favorites(request, user_id):
   
 def likedSongs(request, user_id):
   user = User.objects.filter(id = user_id, is_staff = False).first()
-  playlist_id = "https://open.spotify.com/collection/tracks"
-  results = user.user_playlist_tracks(user, playlist_id)
-  playlist_items = results['items']
-  uris = []
-  
-  while results['next']:
-        results = user.next(results)
-        playlist_items.append(results['items'])
-  
-  for item in playlist_items:
-        is_local = item["is_local"]
-        if is_local == True:
-              continue
-        else:
-             track_id = item["track"]["uri"]
-             uris.append(track_id)
+  playlist_id = "37i9dQZF1EUMDoJuT8yJsl"
+  songs = request.playlist(playlist_id, fields=None, market=None, additional_types=('track',))
   return render(request, 'favorites.html', {
-      'uris' : uris,
-    })
+    'songs' : songs,
+  })
+
+
+#-------------------------------  
   
 
 def profile(request, user_id):
