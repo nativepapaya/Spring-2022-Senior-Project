@@ -336,6 +336,7 @@ def editPost(request, post_id):
   post.description = description
   post.save()
 
+  messages.success(request, 'Your post has been updated!')
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def deletePost(request, post_id):
@@ -356,7 +357,7 @@ def deletePost(request, post_id):
   post.delete()
 
   messages.success(request, 'Your post is deleted!')
-  return redirect('home')
+  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
   
 
 #Like post
