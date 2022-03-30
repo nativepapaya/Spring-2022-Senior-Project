@@ -290,7 +290,7 @@ def home(request):
     return redirect('welcome')
 
   #for now query all posts: this will eventually be followed scoped
-  posts = Post.objects.all()
+  posts = Post.objects.order_by('-id').all()
 
   return render(request, 'home.html', {
     'posts': posts
@@ -331,6 +331,58 @@ def storePost(request):
   post.save()
 
   return redirect('home')
+
+def editPost(request, post_id):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+
+  if request.user.is_staff:
+    return redirect('welcome')
+  
+  post = Post.objects.filter(id = post_id).first()
+
+  if post is None:
+    return redirect('welcome')
+
+  if request.user != post.user_id:
+    return redirect('welcome')
+  
+  title = request.GET['title']
+  description = request.GET['description']
+
+  if title == '':
+    title = post.title
+  
+  if description == '':
+    description = post.description
+  
+  post.title = title
+  post.description = description
+  post.save()
+
+  messages.success(request, 'Your post has been updated!')
+  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def deletePost(request, post_id):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+
+  if request.user.is_staff:
+    return redirect('welcome')
+  
+  post = Post.objects.filter(id = post_id).first()
+
+  if post is None:
+    return redirect('welcome')
+
+  if request.user != post.user_id:
+    return redirect('welcome')
+  
+  post.delete()
+
+  messages.success(request, 'Your post is deleted!')
+  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+  
 
 #Like post
 def likePost(request, pk):

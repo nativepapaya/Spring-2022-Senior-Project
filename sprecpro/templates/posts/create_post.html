@@ -65,6 +65,8 @@
             {% if album_name or song_name %}
               <span>Not the correct track? </span> <br />
               <a class="btn btn-primary" href="{% url 'post.create' %}">Search Again</a>
+              <br /><br />
+              <span>Note: This can not be changed </span> <br />
             {% endif %}
           </div>
           <hr />
