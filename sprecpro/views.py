@@ -31,6 +31,11 @@ def explore(request):
     posts = paginator.page(paginator.num_pages)
   return render(request, 'explore.html', {'posts': posts})
 
+##################################
+#FAVORITES
+##################################
+
+#favorite
 def favorites(request, user_id):
   if not request.user.is_authenticated:
     return redirect('login')
@@ -43,10 +48,10 @@ def favorites(request, user_id):
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
 
-  display_all_favorites = Favorite.objects.filter(user_id=user)
-
   if profile is None or user is None:
     return redirect('welcome')
+
+  display_all_favorites = Favorite.objects.filter(user_id=user)
 
   return render(request, 'favorites.html', {
     'user': user,
@@ -54,25 +59,116 @@ def favorites(request, user_id):
     'favorites': display_all_favorites,
   })
 
+#search_for_favorites
+def searchForFavorites(request):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+
+  #handle amount of tracks to query based on where the request is coming from
+  if request.path == '/post/create/search':
+    limit = '1' #Limit to 1 track returned
+  else:
+    limit = '10'
+
+  #Validate the inputs
+  song_name = request.GET['song_name']
+  artist_name = request.GET['artist_name']  
+  query_string = song_name + " " + artist_name
+
+  social = request.user.social_auth.get(provider='spotify')
+  token = social.extra_data['access_token']
+  print('https://api.spotify.com/v1/search?q='+query_string+'&type=track&market=ES&limit='+limit)
+
+  response = requests.get(
+    url = 'https://api.spotify.com/v1/search?q='+query_string+'&type=track&market=ES&limit='+limit,
+    headers = {
+      'Authorization': 'Bearer ' + token
+    }
+  )
+  
+  text = response.text
+  data = json.loads(text)
+
+  #Check to see if response has a 401 error (token expired). If it does it will alert the user. 
+  try:
+    if data['error']['status'] == 401:
+      messages.error(request, 'Your access token has expired. Please re-login')
+      return redirect('welcome')
+  except:
+    print("Request success")
+
+  returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
+  returned_song_name = data['tracks']['items'][0]['name']
+  returned_song_id = data['tracks']['items'][0]['id']
+  returned_album_name = data['tracks']['items'][0]['album']['name']
+  returned_album_id = data['tracks']['items'][0]['album']['id']
+
+  #debug info
+  print(
+    "Artist Name: " + returned_main_artist_name + "\n" +
+    "Song Name: " + returned_song_name + "\n" +
+    "Song Id: " + returned_song_id + "\n" +
+    "Album Id: " + returned_album_id + "\n" +
+    "Album Name: " + returned_album_name + "\n"
+  )
+  
+  user = request.user
+  profile = Profile.objects.filter(user_id = user).first()
+  display_all_favorites = Favorite.objects.filter(user_id=user)
+
+  #Return back to the same page with the now queried song Data!
+  return render(request, 'favorites.html', {
+    'song_name' : returned_song_name,
+    'song_id': returned_song_id,
+    'artist_name': returned_main_artist_name,
+    'album_name': returned_album_name,
+    'album_id': returned_album_id,
+    'profile': profile,
+    'favorites': display_all_favorites
+  })
+
+#add_fav
 def addToFavorites(request):
+  if not request.user.is_authenticated: 
+    return redirect('login')
+  
+  
+  user = request.user
+  song_uid = request.GET['song_id']
+  song = request.GET['song_name']
+  
+
+  '''TESTING. . . Love Me Sexy
   user = request.user
   song_uid = '3GqjF1xQKcL0BTCtbGDQwn'
   song = 'Love Me Sexy'
+  '''
 
-  favorited = Favorite.objects.create(
+  #If the song_uid already exists in the user's Favorites,
+  #then the song will not be added
+  if Favorite.objects.filter(user_id = user, song_uid = song_uid).first() == None:
+    favorited = Favorite.objects.create(
     user_id = user,
     song_uid = song_uid,
     song_name = song
-  )
-  favorited.save()
+    )
+    favorited.save()
+  
+  #Keeps the user on the same page where the request was made
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+#delete_fav
 def deleteFromFavorites(request, id):
+
+  #If the passed-in ID exists in the Favorite table,
+  #get the item that has that ID and put it in a variable
   favorited = Favorite.objects.filter(id = id).first()
 
+  #Delete it since that item exists
   if favorited != None:
     favorited.delete()
 
+  #Keeps the user on the same page where the request was made
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def profile(request, user_id):

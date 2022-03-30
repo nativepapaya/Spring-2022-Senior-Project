@@ -12,6 +12,7 @@ urlpatterns = [
   path('profile/<user_id>/edit', views.editpr, name='editpr'),
 
   path('profile/<user_id>/favorites', views.favorites, name='favorite'),
+  path('favorites/searchFor', views.searchForFavorites, name='search_for_favorites'),
   path('fav/', views.addToFavorites, name='add_fav'),
   path('nofav/<id>', views.deleteFromFavorites, name='delete_fav'),
 
