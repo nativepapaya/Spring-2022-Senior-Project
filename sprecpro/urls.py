@@ -18,6 +18,8 @@ urlpatterns = [
   path('post/create', views.createPost, name='post.create'),
   path('post/create/search', views.searchSpotify, name='post.create.search'),
   path('post/store', views.storePost, name='post.store'),
+  path('post/<post_id>/edit', views.editPost, name='post.edit'),
+  path('post/<post_id>/delete', views.deletePost, name='post.delete'),
   path('like/<pk>', views.likePost, name='like_post'),
   path('unlike/<pk>', views.unlikePost, name='unlike_post'),
 ]
