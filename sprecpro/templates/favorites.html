@@ -56,7 +56,9 @@
                     <th scope="col">song_name</th>
                     <th scope="col">created_at</th>
                     <th scope="col">edited_at</th>
-                    <th scope="col">action</th>
+                    {% if request.user == user %}
+                        <th scope="col">action</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -67,12 +69,14 @@
                     <td>{{ favorite.song_name }}</td>
                     <td>{{ favorite.created_at }}</td>
                     <td>{{ favorite.edited_at }}</td>
-                    <td>
-                        <form method="POST" action="{% url 'delete_fav' favorite.id %}">
-                            {% csrf_token %}
-                            <input class="btn btn-default btn-danger" type="submit" value="Delete"/>
-                        </form>
-                    </td>
+                    {% if request.user == user %}
+                        <td>
+                            <form method="POST" action="{% url 'delete_fav' favorite.id %}">
+                                {% csrf_token %}
+                                <input class="btn btn-default btn-danger" type="submit" value="Delete"/>
+                            </form>
+                        </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
