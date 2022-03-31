@@ -50,35 +50,19 @@
                 <!--span style="font-size: 20px"-->Home<!--/span--></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'explore' %}">
-                <!--span style="font-size: 20px"-->Explore<!--/span--></a>
+              <a class="nav-link active" href="{% url 'explore' %}">Explore</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'favorite' user.id %}">
-                <!--span style="font-size: 20px"-->Favorites<!--/span--></a>
+           <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ user.first_name }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a>
+                <a class="dropdown-item" href="{% url 'favorite' user.id %}">Favorites</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/logout">Logout</a>
+              </div>
             </li>
-    
-                <li class="nav-item">
-                  <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="40">
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ user.first_name }}
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/logout">Logout</a>
-                  </div>
-                </li>
-                
-          {% endif %}
-          {% if user.is_authenticated %}
-                <li class="nav-item">
-                </li>
-                <li class="nav-item">
-                  <a href="/logout">Log out</a>
-                </li>
           {% else %}
                 <li class="nav-item">
                   <a href="{% url 'login' %}">Log In</a>

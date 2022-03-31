@@ -26,12 +26,14 @@ class Profile(models.Model):
     return self.avatar
 
 class Favorite(models.Model):
-  id = models.AutoField(primary_key=True)
+  id = models.AutoField(primary_key=True) #id of the favorite
+  song_uid = models.TextField(null=False)
   user_id = models.ForeignKey(
     settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE #on user deletion, profile will cascade delete
   )
-  last_played_uid = models.TextField(null=True) #represents the id of the last spotify track played
+  song_uid = models.TextField(null=True)
+  song_name = models.TextField(null=True)
   created_at = models.DateTimeField(auto_now_add=True)
   edited_at = models.DateTimeField(auto_now=True)
   
