@@ -64,20 +64,14 @@ def searchForFavorites(request):
   if not request.user.is_authenticated: 
     return redirect('login')
 
-  #handle amount of tracks to query based on where the request is coming from
-  if request.path == '/post/create/search':
-    limit = '1' #Limit to 1 track returned
-  else:
-    limit = '10'
-
   #Validate the inputs
   song_name = request.GET['song_name']
   artist_name = request.GET['artist_name']  
   query_string = song_name + " " + artist_name
+  limit = '5'
 
   social = request.user.social_auth.get(provider='spotify')
   token = social.extra_data['access_token']
-  print('https://api.spotify.com/v1/search?q='+query_string+'&type=track&market=ES&limit='+limit)
 
   response = requests.get(
     url = 'https://api.spotify.com/v1/search?q='+query_string+'&type=track&market=ES&limit='+limit,
@@ -97,32 +91,29 @@ def searchForFavorites(request):
   except:
     print("Request success")
 
-  returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
-  returned_song_name = data['tracks']['items'][0]['name']
-  returned_song_id = data['tracks']['items'][0]['id']
-  returned_album_name = data['tracks']['items'][0]['album']['name']
-  returned_album_id = data['tracks']['items'][0]['album']['id']
-
-  #debug info
-  print(
-    "Artist Name: " + returned_main_artist_name + "\n" +
-    "Song Name: " + returned_song_name + "\n" +
-    "Song Id: " + returned_song_id + "\n" +
-    "Album Id: " + returned_album_id + "\n" +
-    "Album Name: " + returned_album_name + "\n"
-  )
+  songs = {}
+  loop = data['tracks']['total']
+  if (data['tracks']['total'] > data['tracks']['limit']):
+    loop = data['tracks']['limit']
   
+  for i in range(0,loop):
+    song_id = data['tracks']['items'][i]['id']
+    song_name = data['tracks']['items'][i]['name']
+
+    songs[i] = {
+      'song_id': song_id,
+      'song_name': song_name
+    }
+
   user = request.user
   profile = Profile.objects.filter(user_id = user).first()
   display_all_favorites = Favorite.objects.filter(user_id=user)
 
+  print(songs.values())
+
   #Return back to the same page with the now queried song Data!
   return render(request, 'favorites.html', {
-    'song_name' : returned_song_name,
-    'song_id': returned_song_id,
-    'artist_name': returned_main_artist_name,
-    'album_name': returned_album_name,
-    'album_id': returned_album_id,
+    'songs': songs.values(),
     'profile': profile,
     'favorites': display_all_favorites
   })
@@ -132,7 +123,9 @@ def addToFavorites(request):
   if not request.user.is_authenticated: 
     return redirect('login')
   
-  
+  '''
+
+  '''
   user = request.user
   song_uid = request.GET['song_id']
   song = request.GET['song_name']
@@ -155,7 +148,15 @@ def addToFavorites(request):
     favorited.save()
   
   #Keeps the user on the same page where the request was made
-  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+  user = request.user
+  profile = Profile.objects.filter(user_id = user).first()
+  display_all_favorites = Favorite.objects.filter(user_id=user)
+
+  return render(request, 'favorites.html', {
+    'user': user,
+    'profile': profile,
+    'favorites': display_all_favorites,
+  })
 
 #delete_fav
 def deleteFromFavorites(request, id):

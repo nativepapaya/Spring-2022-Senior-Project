@@ -24,21 +24,26 @@
 
     <br /><br /><br />
 
-    <form type="POST" action="{% url 'add_fav' %}">
-        <div class="mb-2">
-            {% if song_name %}
-            <span>Your searched songs: </span> <br />
-            <iframe src="https://open.spotify.com/embed/track/{{ song_id }}" 
-                width="300" height="80" frameborder="0" allowtransparency="true" 
-                allow="encrypted-media">
-            </iframe>
-            <input type="hidden" name="song_id" value="{{ song_id }}"></input>
-            <input type="hidden" name="song_name" value="{{ song_name }}"></input>
-            <input type="hidden" name="user_id" value="{{ user }}"></input>
-            <input class="btn btn-default btn-danger" type="submit" value="Fav it"/>
-            {% endif %}
-        </div>
-    </form>
+    
+    {% if songs %}
+        <span>Your searched songs: </span> <br />
+        {% for song in songs %}
+
+            <form type="POST" action="{% url 'add_fav' %}">
+                <div class="mb-2"> 
+                    <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="300" height="80" 
+                    frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+                    <input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
+                    <input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
+                    <input type="hidden" name="user_id" value="{{ user }}"></input>
+                    <input class="btn btn-default btn-danger" type="submit" value="Fav it"/>
+                    
+                </div>
+            </form>
+        {% endfor %}
+    {% endif %}
+                
 
     <br/><br/>
     <center>
