@@ -24,7 +24,7 @@
                       <p class="text-muted font-size-sm">View Spotify Page</p>
 
                       <!-- Use an If statement here. Follow button if it's not the user's profile. Edit Profile if it is-->
-                      {% if request.user == User.objects.filter(user.id = user.id).first() %}
+                      {% if request.user == profile.user_id %}
                       <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
                       {% else %}
                       <button class="btn btn-primary">Follow</button>
