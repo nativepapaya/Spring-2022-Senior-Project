@@ -48,20 +48,18 @@
               <a class="nav-link active" href="{% url 'home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'profile' user.id %}">Profile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'favorite' user.id %}">Favorites</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link active" href="{% url 'explore' %}">Explore</a>
             </li>
-          {% endif %}
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-            </li>
-            <li class="nav-item">
-              <a href="/logout">Log out</a>
+           <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ user.first_name }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a>
+                <a class="dropdown-item" href="{% url 'favorite' user.id %}">Favorites</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/logout">Logout</a>
+              </div>
             </li>
           {% else %}
             <li class="nav-item">
