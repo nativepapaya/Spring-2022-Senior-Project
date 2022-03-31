@@ -40,33 +40,49 @@
       <div class="collapse navbar-collapse justify-content-md-center" id="navbar">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="{% url 'welcome' %}">SPRecPro</a>
+            <a class="nav-link" href="{% url 'welcome' %}">
+              <!--span style="font-size: 20px"-->SPRecPro<!--/span--></a>
           </li>
           <!--Staff users (super users) are not spotify users and do not have a profile or home feed-->
           {% if user.is_authenticated and not user.is_staff %}
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'home' %}">Home</a>
+              <a class="nav-link active" href="{% url 'home' %}">
+                <!--span style="font-size: 20px"-->Home<!--/span--></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'profile' user.id %}">Profile</a>
+              <a class="nav-link active" href="{% url 'explore' %}">
+                <!--span style="font-size: 20px"-->Explore<!--/span--></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'favorite' user.id %}">Favorites</a>
+              <a class="nav-link active" href="{% url 'favorite' user.id %}">
+                <!--span style="font-size: 20px"-->Favorites<!--/span--></a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'explore' %}">Explore</a>
-            </li>
+    
+                <li class="nav-item">
+                  <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="40">
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ user.first_name }}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/logout">Logout</a>
+                  </div>
+                </li>
+                
           {% endif %}
           {% if user.is_authenticated %}
-            <li class="nav-item">
-            </li>
-            <li class="nav-item">
-              <a href="/logout">Log out</a>
-            </li>
+                <li class="nav-item">
+                </li>
+                <li class="nav-item">
+                  <a href="/logout">Log out</a>
+                </li>
           {% else %}
-            <li class="nav-item">
-              <a href="{% url 'login' %}">Log In</a>
-            </li>
+                <li class="nav-item">
+                  <a href="{% url 'login' %}">Log In</a>
+                </li>
           {% endif %}
         </ul>
       </div>
