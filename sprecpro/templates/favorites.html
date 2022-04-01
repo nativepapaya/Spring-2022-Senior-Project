@@ -1,26 +1,39 @@
 {% extends 'layouts/app.html' %}
 
 {% block content %}
-    <img src="{{ profile.avatar }}"></img>
-    <span>{{ user.first_name }}</span>
-
-    
-    <div class="row justify-content-center">
-        <div class="col-md-6 mb-2">
-            <h5>Search a SONG to add to FAVORITES</h5>
-            <form type="GET" action="{% url 'search_for_favorites' %}">
-            {% csrf_token %}
-            <div class="mb-2">
-                <input class="form-control" type="text" name="song_name" id="song_box" placeholder="Song Name"></input>
+<div class="row gutters-sm">
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center">
+                    <img src="{{ profile.avatar }}" class="rounded-circle"></img>
+                    <span>{{ user.first_name }}</span>
+                </div>
             </div>
-            <div class="mb-2">
-                <input class="form-control" type="text" name="artist_name" id="album_box" placeholder="Artist Name"></input>
-            </div>
-            
-            <button class="btn btn-primary">Search</button>
-            </form>
         </div>
     </div>
+</div>
+
+<div class="col-md-8">
+    <div class="card mb-3">
+            <div class="card-body">
+                    <div class="row">
+                        <h5>Search a SONG to add to FAVORITES</h5>
+                        <form type="GET" action="{% url 'search_for_favorites' %}">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <input class="form-control" type="text" name="song_name" id="song_box" placeholder="Song Name"></input>
+                        </div>
+                        <div class="mb-2">
+                            <input class="form-control" type="text" name="artist_name" id="album_box" placeholder="Artist Name"></input>
+                        </div>
+                        
+                        <button class="btn btn-primary">Search</button>
+                        </form>
+                    </div>
+            </div>
+    </div>
+</div>
 
     <br /><br /><br />
 
@@ -31,8 +44,8 @@
 
             <form type="POST" action="{% url 'add_fav' %}">
                 <div class="mb-2"> 
-                    <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="300" height="80" 
-                    frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                    <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="300" height="380" 
+                    align="left" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 
                     <input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
                     <input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
@@ -51,11 +64,8 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
-                    <th scope="col">primary_key</th>
-                    <th scope="col">song_uid</th>
-                    <th scope="col">song_name</th>
-                    <th scope="col">created_at</th>
-                    <th scope="col">edited_at</th>
+                    <th scope="col">Song #</th>
+                    <th scope="col">Track</th>
                     {% if request.user == user %}
                         <th scope="col">action</th>
                     {% endif %}
@@ -65,10 +75,8 @@
                 {% for favorite in favorites %}                
                 <tr>
                     <th scope="row">{{ favorite.id }}</th>
-                    <td>{{ favorite.song_uid }}</td>
-                    <td>{{ favorite.song_name }}</td>
-                    <td>{{ favorite.created_at }}</td>
-                    <td>{{ favorite.edited_at }}</td>
+                    <td><iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="300" height="80" 
+                        frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></td>
                     {% if request.user == user %}
                         <td>
                             <form method="POST" action="{% url 'delete_fav' favorite.id %}">
