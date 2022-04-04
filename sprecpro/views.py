@@ -405,6 +405,11 @@ def home(request):
     'posts': posts
   })
 
+def viewPost(request, pk):
+  post = Post.objects.filter(id=pk)[0]
+  comments = Comment.objects.filter(post_id = post)
+  return render(request, 'posts/post.html', {'post': post, 'comments': comments})
+
 #Posts.create
 def createPost(request):
   return render(request, 'posts/create_post.html', {})
@@ -515,15 +520,19 @@ def unlikePost(request, pk):
   return HttpResponseRedirect(request.POST.get('next', '/'))
 
 #Make comment
-
 def comment(request, pk):
   post = Post.objects.filter(id=pk)[0]
-  print(request.POST.get('next', '/'))
-  print('blah blah blah')
   comment = Comment.objects.create(
     user_id = request.user,
     post_id = post,
     body = request.POST.get('body')
   )
   comment.save()
+  return HttpResponseRedirect(request.POST.get('next', '/'))
+
+#Delete comment
+def deleteComment(request, pk):
+  comment = Comment.objects.filter(id=pk)
+  if comment != None:
+    comment.delete()
   return HttpResponseRedirect(request.POST.get('next', '/'))
