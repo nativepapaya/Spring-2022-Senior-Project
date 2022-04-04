@@ -134,28 +134,18 @@ def searchForFavorites(request):
 def addToFavorites(request):
   if not request.user.is_authenticated: 
     return redirect('login')
-  
-  '''
 
-  '''
   user = request.user
   song_uid = request.GET['song_id']
   song = request.GET['song_name']
   
-
-  '''TESTING. . . Love Me Sexy
-  user = request.user
-  song_uid = '3GqjF1xQKcL0BTCtbGDQwn'
-  song = 'Love Me Sexy'
-  '''
-
   #If the song_uid already exists in the user's Favorites,
   #then the song will not be added
   if Favorite.objects.filter(user_id = user, song_uid = song_uid).first() == None:
     favorited = Favorite.objects.create(
-    user_id = user,
-    song_uid = song_uid,
-    song_name = song
+      user_id = user,
+      song_uid = song_uid,
+      song_name = song
     )
     favorited.save()
   
@@ -210,7 +200,7 @@ def profile(request, user_id):
     #get the users most recently played song and set uid field
     song_data = getUserSongData(request.user)
     if not song_data['last_played'] == None or song_data['last_played'] == '':
-      setattr(profile, 'last_played_uid', song_data['last_played'])
+      #setattr(profile, 'last_played_uid', song_data['last_played'])
       profile.save()
     
     user_posts = Post.objects.filter(user_id = user_id)
