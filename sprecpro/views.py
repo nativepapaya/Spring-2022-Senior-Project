@@ -329,4 +329,16 @@ def unlikePost(request, pk):
     like.delete()
   return HttpResponseRedirect(request.POST.get('next', '/'))
 
+#Make comment
 
+def comment(request, pk):
+  post = Post.objects.filter(id=pk)[0]
+  print(request.POST.get('next', '/'))
+  print('blah blah blah')
+  comment = Comment.objects.create(
+    user_id = request.user,
+    post_id = post,
+    body = request.POST.get('body')
+  )
+  comment.save()
+  return HttpResponseRedirect(request.POST.get('next', '/'))

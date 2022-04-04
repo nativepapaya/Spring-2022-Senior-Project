@@ -1,5 +1,5 @@
 {% extends 'layouts/app.html' %}
-
+{% load like_tags %}
 {% block content %}
   <div class="container py-2">
     <a class="btn btn-primary" href="{% url 'post.create' %}">Create Post</a>
@@ -32,10 +32,31 @@
                   {% endif %}
                 </div>
               </div>
+              <hr>
+              <div class="card-subtitle d-flex flex-row">
+                {% isLiked post user as liked %}
+                <span style="margin:0px 0px 10px 10px">
+                {% if liked %}
+                  <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                  </form>
+                {% else %}
+                  <form action="{% url 'like_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                  </form>
+                {% endif %}
+                </span>
+                <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Comment</button> 
+                <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
+              </div>
             </div>
           </div>
         </div>
-        <br />
+        <br/>
       {% endfor %}
     {% endif %}
   </div>
