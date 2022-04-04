@@ -8,16 +8,13 @@ class Profile(models.Model):
     on_delete=models.CASCADE #on user deletion, profile will cascade delete
   )
   avatar = models.TextField(null=True)
-  pronouns = models.CharField(
-    max_length=9, 
-    choices=[('he/him', 'he/him'), ('she/her', 'she/her'), ('they/them', 'they/them')],
-    null=True
-  )
+  pronouns = models.TextField(null=True)
   age = models.IntegerField(null=True)
   bio = models.TextField(max_length=100, null=True)
+  featured_played_uid = models.TextField(null=True)
   last_played_uid = models.TextField(null=True) #represents the id of the last spotify track played
-  created_at = models.DateTimeField(auto_now_add=True),
-  updated_at = models.DateTimeField(auto_now=True),
+  created_at = models.DateTimeField(auto_now_add=True)
+  edited_at = models.DateTimeField(auto_now=True)
 
   def getId(self):
     return self.id
