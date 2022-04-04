@@ -4,23 +4,83 @@
     <img src="{{ profile.avatar }}"></img>
     <span>{{ user.first_name }}</span>
 
-<!-- test push blah blah blah-->
+    
+    <div class="row justify-content-center">
+        <div class="col-md-6 mb-2">
+            <h5>Search a SONG to add to FAVORITES</h5>
+            <form type="GET" action="{% url 'search_for_favorites' %}">
+            {% csrf_token %}
+            <div class="mb-2">
+                <input class="form-control" type="text" name="song_name" id="song_box" placeholder="Song Name"></input>
+            </div>
+            <div class="mb-2">
+                <input class="form-control" type="text" name="artist_name" id="album_box" placeholder="Artist Name"></input>
+            </div>
+            
+            <button class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
 
+    <br /><br /><br />
 
-    <h2>Favorties</h2>
-    <h5> Here is where the list of user favorites will be</h5>
-    <!--{% if favorites %}
-        <table class="table">
-        <tbody>
-        <tr>
-        {% for favorite in favorites %}
-            <td>
-                <iframe src="https://open.spotify.com/embed/track/{{ fav_id }}" width="300" height="380" 
-                frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-            </td>
+    
+    {% if songs %}
+        <span>Your searched songs: </span> <br />
+        {% for song in songs %}
+
+            <form type="POST" action="{% url 'add_fav' %}">
+                <div class="mb-2"> 
+                    <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="300" height="80" 
+                    frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+                    <input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
+                    <input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
+                    <input type="hidden" name="user_id" value="{{ user }}"></input>
+                    <input class="btn btn-default btn-danger" type="submit" value="Fav it"/>
+                    
+                </div>
+            </form>
         {% endfor %}
-        </tr>
-        </tbody>
-        </table>   
-    {% endif %}-->
+    {% endif %}
+                
+
+    <br/><br/>
+    <center>
+        {% if favorites %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">primary_key</th>
+                    <th scope="col">song_uid</th>
+                    <th scope="col">song_name</th>
+                    <th scope="col">created_at</th>
+                    <th scope="col">edited_at</th>
+                    {% if request.user == user %}
+                        <th scope="col">action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for favorite in favorites %}                
+                <tr>
+                    <th scope="row">{{ favorite.id }}</th>
+                    <td>{{ favorite.song_uid }}</td>
+                    <td>{{ favorite.song_name }}</td>
+                    <td>{{ favorite.created_at }}</td>
+                    <td>{{ favorite.edited_at }}</td>
+                    {% if request.user == user %}
+                        <td>
+                            <form method="POST" action="{% url 'delete_fav' favorite.id %}">
+                                {% csrf_token %}
+                                <input class="btn btn-default btn-danger" type="submit" value="Delete"/>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </center>
 {% endblock %}
