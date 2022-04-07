@@ -32,7 +32,7 @@
                                     <th scope="col">Song #</th>
                                     <th scope="col">Track</th>
                                     {% if request.user == user %}
-                                        <th scope="col">action</th>
+                                        <th scope="col">Delete</th>
                                     {% endif %}
                                 </tr>
                             </thead>
@@ -46,7 +46,7 @@
                                         <td>
                                             <form method="POST" action="{% url 'delete_fav' favorite.id %}">
                                                 {% csrf_token %}
-                                                <input class="btn btn-default btn-danger" type="submit" value="Delete"/>
+                                                <input class="btn btn-default btn-outline-secondary" type="submit" value="&#128465"/>
                                             </form>
                                         </td>
                                     {% endif %}
@@ -97,13 +97,13 @@
                             <div class="col">
                                 <form type="POST" action="{% url 'add_fav' %}">
                                 
-                                    <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="300" height="380" 
+                                    <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="235" height="280" 
                                     frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                 
                                     <input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
                                     <input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
                                     <input type="hidden" name="user_id" value="{{ user }}"></input>
-                                    <input class="btn btn-default btn-danger" type="submit" value="Fav it"/>
+                                    <input class="btn btn-default btn-outline-secondary" type="submit" value="&#10084"/>
                                         
                                 
                                 </form>
