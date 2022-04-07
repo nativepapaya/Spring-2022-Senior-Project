@@ -99,7 +99,7 @@
                 {% csrf_token %}
                 <div class="mb-2">
                     <textarea name="body" rows="3" type="text" class="form-control m-1" placeholder="Reply..." maxlength="240" oninput="displayCharsLeft(this, 240)" required></textarea>
-                    <div class="d-inline mb-2" id="charsLeft"></div>
+                    <div class="d-inline mb-2 ml-2 text-secondary" id="charsLeft">240</div>
                 </div>
                 <input type="hidden" name="next" value="{{ request.path }}">
                 <button type="submit" class="btn btn-primary mt-1 ml-1">Submit</button>
@@ -114,7 +114,7 @@
                 <div class="card mt-2">
                     <div class="card-header">
                         <div class="row align-items-center">
-                        <!-- <img src="{{ comment.profile.avatar }}" width="25" height="25" /> !-->
+                        <!-- <img src="{{ comment.user_id.profile.avatar }}" width="25" height="25" /> !-->
                         <span class="col-8"><b>{{ comment.user_id.first_name }}</b> @{{ comment.user_id.first_name }}</span>
                         {% if comment.user_id == request.user %}
                         <form class="col-4 d-flex" method="POST" action="{% url 'comment.delete' comment.id %}">
