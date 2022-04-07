@@ -80,7 +80,7 @@ def searchForFavorites(request):
   song_name = request.GET['song_name']
   artist_name = request.GET['artist_name']  
   query_string = song_name + " " + artist_name
-  limit = '5'
+  limit = '4'
 
   social = request.user.social_auth.get(provider='spotify')
   token = social.extra_data['access_token']
@@ -162,7 +162,7 @@ def addToFavorites(request):
 
 #delete_fav
 def deleteFromFavorites(request, id):
-
+    
   #If the passed-in ID exists in the Favorite table,
   #get the item that has that ID and put it in a variable
   favorited = Favorite.objects.filter(id = id).first()
@@ -172,7 +172,17 @@ def deleteFromFavorites(request, id):
     favorited.delete()
 
   #Keeps the user on the same page where the request was made
-  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+  #return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+  user = request.user
+  profile = Profile.objects.filter(user_id = user).first()
+  display_all_favorites = Favorite.objects.filter(user_id=user)
+
+  return render(request, 'favorites.html', {
+    'user': user,
+    'profile': profile,
+    'favorites': display_all_favorites,
+  })
 
 def profile(request, user_id):
   #If the user is not logged in

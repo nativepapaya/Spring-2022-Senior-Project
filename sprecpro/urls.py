@@ -19,6 +19,7 @@ urlpatterns = [
   path('favorites/searchFor', views.searchForFavorites, name='search_for_favorites'),
   path('fav/', views.addToFavorites, name='add_fav'),
   path('nofav/<id>', views.deleteFromFavorites, name='delete_fav'),
+  #path('isfavorited/<id>', views.isFavorited, name='is_favorited'),
 
   path('post/create', views.createPost, name='post.create'),
   path('post/create/search', views.searchSpotify, name='post.create.search'),
