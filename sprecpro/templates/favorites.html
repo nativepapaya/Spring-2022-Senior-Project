@@ -19,8 +19,8 @@
                 </div>
               </div>
 
-              
-              {% if request.user == user %}
+            <!-- [START] When looking at OWN favorites page -->  
+            {% if request.user == user %}
               <div class="card mt-3">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
@@ -31,9 +31,7 @@
                                 <tr>
                                     <th scope="col">Song #</th>
                                     <th scope="col">Track</th>
-                                    {% if request.user == user %}
-                                        <th scope="col">Delete</th>
-                                    {% endif %}
+                                    <th scope="col">Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,11 +57,9 @@
                   </li>
                 </ul>
               </div>
-              {% endif %}
-            
             </div>
 
-            {% if request.user == user %}
+            
             <div class="col-md-6">
                 
                 <div class="card mt-3">
@@ -104,16 +100,12 @@
                         {% for song in songs %}
                         <div class="col">
                             <form type="POST" action="{% url 'add_fav' %}">
-                            
                                 <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="235" height="280" 
                                 frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-            
                                 <input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
                                 <input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
                                 <input type="hidden" name="user_id" value="{{ user }}"></input>
                                 <input class="btn btn-default btn-outline-secondary" type="submit" value="&#10084"/>
-                                    
-                            
                             </form>
                         </div>
                         {% endfor %}
@@ -124,48 +116,36 @@
                     </div>
                 </div>
             </div>
+
+
             {% else %}
-            <div class="col-md-6">
-
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-    
-                        {% if favorites %}
-                            <table class="table">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">Song #</th>
-                                        <th scope="col">Track</th>
-                                        {% if request.user == user %}
-                                            <th scope="col">Delete</th>
-                                        {% endif %}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for favorite in favorites %}                
-                                    <tr>
-                                        <th scope="row">{{ forloop.counter }}</th>
-                                        <td><iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="300" height="80" 
-                                            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></td>
-                                        {% if request.user == user %}
-                                            <td>
-                                                <form method="POST" action="{% url 'delete_fav' favorite.id %}">
-                                                    {% csrf_token %}
-                                                    <input class="btn btn-default btn-outline-secondary" type="submit" value="&#128465"/>
-                                                </form>
-                                            </td>
-                                        {% endif %}
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        {% endif %}
-                    </li>
-                </ul>
-
-            </div>
-            {% endif %}
         </div>
+        <!--
+            [END] When looking at OWN favorites page
+        -->
+        <br/>
+        <!--
+            [START] When looking at OTHER'S favorites page
+        -->
+        <div style="margin: 0.5em; padding: 0.5em;">
+            <div class="p-3 mb-3 bg-dark text-white">Favorites</div>
+            <div>
+                {% if favorites %}
+                    {% for favorite in favorites %}
+                        <div style="display: inline-block;">
+                            <iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="275" height="280" 
+                            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <!--
+            [END] When looking at OTHER'S favorites page
+        -->
+
+            {% endif %}      <!-- [END] Location of the Favorite Songs change depending on user -->
+        
     </div>
 </div>
 {% endblock %}
