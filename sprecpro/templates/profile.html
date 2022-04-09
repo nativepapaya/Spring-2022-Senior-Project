@@ -1,5 +1,6 @@
 {% extends 'layouts/app.html' %}
 {% load like_tags %}
+{% load follow_tags %}
 {% block content %}
 {% if messages %}
   {% for message in messages %}
@@ -24,7 +25,20 @@
                 {% if request.user == profile.user_id %}
                   <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
                 {% else %}
-                  <button class="btn btn-primary">Follow</button>
+                  {% isFollowedBy profile user as followedBy %}
+                  {% if followedBy %}
+                    <form action="{% url 'unfollow' profile.user_id.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="btn btn-danger"><b>Unfollow</b></button> 
+                    </form>
+                  {% else %}
+                    <form action="{% url 'follow' profile.user_id.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="btn btn-primary"><b>Follow</b></button> 
+                    </form>
+                  {% endif %}
                 {% endif %}
               </div>
             </div>
@@ -39,7 +53,7 @@
                 </svg>
                 Followers:
               </h6>
-              <span class="text-secondary">1,002,941</span>
+              <span class="text-secondary">{% getFollowCount profile %}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
               <h6 class="mb-0">
@@ -48,7 +62,7 @@
                 </svg>
                 Following:
               </h6>
-              <span class="text-secondary">2</span>
+              <span class="text-secondary">{% getFollowingCount profile %}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
               <h6 class="mb-0">
@@ -139,96 +153,102 @@
                   {% for post in posts %}
                   <div class="row justify-content-center d-flex">
                     <div class="col-md-8">
-                      <div class="card">
+                    <div class="card">
                         <div class="card-header">
-                          <img src="{{ post.profile.avatar }}" width="25" height="25" />
-                          <span><b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</span>
-                          {% if post.user_id == request.user %}
-                          <!-- Button trigger modal -->
-                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                          Edit 
-                          </button>
-                          <form type="POST" action="{% url 'post.edit' post.id %}">
-                            <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <div class="mb-2">
-                                      <label class="form-label">Title</label>
-                                      <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
-                                    </div>
-                                    <div class="mb-2">
-                                      <label class="form-label">Description</label>
-                                      <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
-                                    </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Edit</button>
-                                  </div>
-                                </div>
-                              </div>
+                        <div class="row align-items-center">
+                            <div class="col-7">
+                            <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                            <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}</span>
                             </div>
-                          </form>
-                          <form type="POST" action="{% url 'post.delete' post.id %}">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                          </form>
-                          {% endif %}
+                            {% if post.user_id == request.user %}
+                                <div class="col-5 d-flex">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary mr-2 ml-auto" data-toggle="modal" data-target="#exampleModal">
+                                Edit 
+                                </button>
+                                <form type="POST" action="{% url 'post.edit' post.id %}">
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body">
+                                        <div class="mb-2">
+                                            <label class="form-label">Title</label>
+                                            <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Description</label>
+                                            <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
+                                        </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                </form>
+                                <form type="POST" action="{% url 'post.delete' post.id %}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                                </div>
+                            {% endif %}
+                        </div>
                         </div>
                         <div class="card-body">
-                          <h5 class="card-title">{{ post.title }}</h5>
-                          <p class="card-text">{{ post.description }}</p>
-                          <div class="mb-2">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.description }}</p>
+                        <div class="mb-2">
                             {% if post.rec_song_id %}
                             <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
-                              width="300" height="80" frameborder="0" allowtransparency="true" 
-                              allow="encrypted-media">
+                                width="300" height="80" frameborder="0" allowtransparency="true" 
+                                allow="encrypted-media">
                             </iframe>
                             {% endif %}
-                          </div>
-                          <div class="mb-2">
+                        </div>
+                        <div>
                             {% if post.rec_album_id %}
                             <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
-                              width="300" height="80" frameborder="0" allowtransparency="true" 
-                              allow="encrypted-media">
+                                width="300" height="80" frameborder="0" allowtransparency="true" 
+                                allow="encrypted-media">
                             </iframe>
                             {% endif %}
-                          </div>
                         </div>
-                        <hr/>
-                        <div class="card-subtitle d-flex flex-row">
-                          {% isLiked post user as liked %}
-                          <span style="margin:0px 0px 10px 10px">
-                          {% if liked %}
-                            <form action="{% url 'unlike_post' post.pk %}" method="POST">
-                              {% csrf_token %}
-                              <input type="hidden" name="next" value="{{ request.path }}">
-                              <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
-                            </form>
-                          {% else %}
-                            <form action="{% url 'like_post' post.pk %}" method="POST">
-                              {% csrf_token %}
-                              <input type="hidden" name="next" value="{{ request.path }}">
-                              <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
-                            </form>
-                          {% endif %}
-                          </span>
-                          <form action="{% url 'post.view' post.pk %}">
-                            <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">View Post</button>
-                          </form> 
-                          <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
+                        </div>
+                        <hr>
+                        <div class="card-subtitle d-flex flex-row mt-1 mb-3 mx-1">
+                            {% isLiked post user as liked %}
+                            <span class="ml-2">
+                            {% if liked %}
+                                <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                                </form>
+                            {% else %}
+                                <form action="{% url 'like_post' post.pk %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                                </form>
+                            {% endif %}
+                            </span>
+                            <form action="{% url 'post.view' post.pk %}">
+                              <button type="submit" class="btn btn-secondary ml-2">View Post</button>
+                            </form> 
+                            <button class="btn btn-secondary ml-2">Share</button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <br />
+                  <br/>
                   {% endfor %}
                 {% else %}
                   <span>This user has no posts</span>  

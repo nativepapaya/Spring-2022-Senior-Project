@@ -14,6 +14,8 @@ urlpatterns = [
   path('profile/<user_id>/edit', views.editpr, name='editpr'),
   path('profile/<user_id>/update', views.updateProfile, name="updateProfile"),
   path('profile/<user_id>/search', views.searchForFeatured, name="searchForFeatured"),
+  path('follow/<user_id>', views.follow, name='follow'),
+  path('unfollow/<user_id>', views.unfollow, name='unfollow'),
  
   path('profile/<user_id>/favorites', views.favorites, name='favorite'),
   path('favorites/searchFor', views.searchForFavorites, name='search_for_favorites'),
