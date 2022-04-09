@@ -1,7 +1,7 @@
 {% extends 'layouts/app.html' %}
 {% load like_tags %}
 {% block content %}
-<div class="container d-flex justify-content-center">
+<div class="d-flex justify-content-center">
 
     <!--Filters-->
     <div class="col-2 bg-dark text-white">
@@ -9,7 +9,7 @@
     </div>
 
     <!--Main content-->
-    <div class="infinite-container col-8 bg-light" style="min-height: 100vh">
+    <div class="infinite-container col-6 bg-light" style="min-height: 100vh">
 
       <!--Create posts-->
       {% for post in posts %}
