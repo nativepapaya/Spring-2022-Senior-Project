@@ -13,54 +13,98 @@
 
       <!--Create posts-->
       {% for post in posts %}
-      <div class="infinite-item">
-        <div class="card" style="margin:20px 0px 20px 0px">
-          <div class="card-header">
-            <img src="{{ post.profile.avatar }}" width="25" height="25" />
-            <span><b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</span>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">{{ post.title }}</h5>
-            <p class="card-text">{{ post.description }}</p>
-            <div class="mb-2">
-              {% if post.rec_song_id %}
-                <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
-                  width="300" height="80" frameborder="0" allowtransparency="true" 
-                  allow="encrypted-media">
-                </iframe>
+      <div class="row justify-content-center d-flex">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <img src="{{ post.profile.avatar }}" width="25" height="25" />
+              <span><b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</span>
+              {% if post.user_id == request.user %}
+                  <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                  Edit 
+                </button>
+                <form type="POST" action="{% url 'post.edit' post.id %}">
+                  <!-- Modal -->
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="mb-2">
+                            <label class="form-label">Title</label>
+                            <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
+                          </div>
+                          <div class="mb-2">
+                            <label class="form-label">Description</label>
+                            <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Edit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <form type="POST" action="{% url 'post.delete' post.id %}">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
               {% endif %}
             </div>
-            <div class="mb-2">
-              {% if post.rec_album_id %}
-                <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
-                  width="300" height="80" frameborder="0" allowtransparency="true" 
-                  allow="encrypted-media">
-                </iframe>
-              {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text">{{ post.description }}</p>
+              <div class="mb-2">
+                {% if post.rec_song_id %}
+                  <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% endif %}
+              </div>
+              <div class="mb-2">
+                {% if post.rec_album_id %}
+                  <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% endif %}
+              </div>
             </div>
-          </div>
-          <hr>
-          <div class="card-subtitle d-flex flex-row">
-            {% isLiked post user as liked %}
-            <span class="ml-2 mb-2">
-            {% if liked %}
+            <hr>
+            <div class="card-subtitle d-flex flex-row">
+              {% isLiked post user as liked %}
+              <span style="margin:0px 0px 10px 10px">
+              {% if liked %}
                 <form action="{% url 'unlike_post' post.pk %}" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
                 </form>
-            {% else %}
+              {% else %}
                 <form action="{% url 'like_post' post.pk %}" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
                 </form>
-            {% endif %}
-            </span>
-            <button class="btn btn-secondary mb-2 ml-2">Comment</button> 
-            <button class="btn btn-secondary mb-2 ml-2">Share</button>
+              {% endif %}
+              </span>
+              <form action="{% url 'post.view' post.pk %}">
+                <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">View Post</button>
+              </form> 
+              <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
+            </div>
+          </div>
         </div>
       </div>
+      <br/>
       {% endfor %}
       
 

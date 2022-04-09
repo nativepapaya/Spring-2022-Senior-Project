@@ -98,7 +98,9 @@
                   </form>
                 {% endif %}
                 </span>
-                <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Comment</button> 
+                <form action="{% url 'post.view' post.pk %}">
+                  <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">View Post</button>
+                </form> 
                 <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
               </div>
             </div>

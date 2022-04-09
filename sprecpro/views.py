@@ -292,7 +292,7 @@ def updateProfile(request, user_id):
     pronouns = profile.pronouns
   
   if featured == '':
-    featured = profile.featured
+    featured = profile.featured_played_uid
 
   profile.age = age
   profile.bio = bio
