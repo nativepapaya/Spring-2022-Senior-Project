@@ -22,6 +22,16 @@ class Profile(models.Model):
   def getAvatar(self):
     return self.avatar
 
+  def isFollowedBy(self, user):
+    follow = Follow.objects.filter(followee_id = self.user_id, follower_id = user).first()
+    return follow != None
+
+  def getFollowCount(self):
+    return len(Follow.objects.filter(followee_id = self.user_id))
+
+  def getFollowingCount(self):
+    return len(Follow.objects.filter(follower_id = self.user_id))
+
 class Favorite(models.Model):
   id = models.AutoField(primary_key=True) #id of the favorite
   song_uid = models.TextField(null=False)

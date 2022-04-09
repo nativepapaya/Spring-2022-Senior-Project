@@ -1,5 +1,6 @@
 {% extends 'layouts/app.html' %}
 {% load like_tags %}
+{% load follow_tags %}
 {% block content %}
 {% if messages %}
   {% for message in messages %}
@@ -24,7 +25,20 @@
                 {% if request.user == profile.user_id %}
                   <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
                 {% else %}
-                  <button class="btn btn-primary">Follow</button>
+                  {% isFollowedBy profile user as followedBy %}
+                  {% if followedBy %}
+                    <form action="{% url 'unfollow' profile.user_id.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="btn btn-danger"><b>Unfollow</b></button> 
+                    </form>
+                  {% else %}
+                    <form action="{% url 'follow' profile.user_id.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="btn btn-primary"><b>Follow</b></button> 
+                    </form>
+                  {% endif %}
                 {% endif %}
               </div>
             </div>
@@ -39,7 +53,7 @@
                 </svg>
                 Followers:
               </h6>
-              <span class="text-secondary">1,002,941</span>
+              <span class="text-secondary">{% getFollowCount profile %}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
               <h6 class="mb-0">
@@ -48,7 +62,7 @@
                 </svg>
                 Following:
               </h6>
-              <span class="text-secondary">2</span>
+              <span class="text-secondary">{% getFollowingCount profile %}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
               <h6 class="mb-0">

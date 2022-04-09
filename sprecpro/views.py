@@ -635,3 +635,20 @@ def deleteComment(request, pk):
   if comment != None:
     comment.delete()
   return HttpResponseRedirect(request.POST.get('next', '/'))
+
+#Follow
+def follow(request, user_id):
+  user = User.objects.filter(id=user_id)[0]
+  follow = Follow.objects.create(
+    follower_id = request.user,
+    followee_id = user
+  )
+  follow.save()
+  return HttpResponseRedirect(request.POST.get('next','/'))
+
+#Unfollow
+def unfollow(request, user_id):
+  follow = Follow.objects.filter(followee_id=User.objects.filter(id=user_id)[0],follower_id=request.user)[0]
+  if follow != None:
+    follow.delete()
+  return HttpResponseRedirect(request.POST.get('next','/'))
