@@ -10,20 +10,25 @@
   {% endfor %}
 {% endif %}
 
-<h1>EDIT YOUR PROFILE HERE</h1>
-
-<div class="container">
+<div class="container py-4">
   <div class="row justify-content-center d-flex">
-    <div class="col-md-8">
-      <form type="POST" action="{% url 'updateProfile' user.id %}">
+    <div class="col-md-6">
+      <h5 class="mb-2 py-1">Update Profile Details</h5>
+      <form type="POST" action="{% url 'updateProfile' user.id %}" id="updateProfileForm">
         {% csrf_token %}
-        <div class="mb-2">
-          <label class="form-label">Age</label>
-          <input class="form-control" type="number" name="age" placeholder="Age"></input>
-        </div>
-        <div class="mb-2">
-          <label class="form-label">Pronouns</label>
-          <input class="form-control" type="text" name="pronouns" placeholder="pronouns"></input>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-2">
+              <label class="form-label">Age</label>
+              <input class="form-control" type="number" name="age" placeholder="Age"></input>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-2">
+              <label class="form-label">Pronouns</label>
+              <input class="form-control" type="text" name="pronouns" placeholder="pronouns"></input>
+            </div>
+          </div>
         </div>
         <div class="mb-2">
           <label class="form-label">Bio</label>
@@ -31,13 +36,11 @@
           <div class="d-inline mb-2" id="charsLeft"></div>
         </div>
         <input type="hidden" value="{{ song_id }}" name="featured_track"></input>
-        <button class="btn btn-primary" type="submit">Submit</button>
       </form>
-    </div>
-  </div>
-</div>
-<div class="col-md-6 mb-2">
+      <hr/>
+      <div class="mb-2">
         <h5>Search for a featured song!</h5>
+        <i><span class="text-muted">(Optional)</span></i>
         <form type="GET" action="{% url 'searchForFeatured' profile.user_id.id %}">
           <div class="mb-2">
             <input class="form-control" type="text" name="song_name" id="song_box" placeholder="Song Name"></input>
@@ -48,22 +51,29 @@
           <button class="btn btn-primary">Search</button>
         </form>  
       </div>
-        <div class="mb-2">
-            {% if song_name %}
-            <span>Your searched song: </span> <br />
-              <iframe src="https://open.spotify.com/embed/track/{{song_id}}" 
-                width="300" height="80" frameborder="0" allowtransparency="true" 
-                allow="encrypted-media">
-              </iframe>
-            {% endif %}
-          </div>
-          <div class="mb-2">
-            {% if song_name %}
-              <span>Not the correct track? </span> <br />
-              <a class="btn btn-primary" href="{% url 'editpr' profile.user_id.id %}">Search Again</a>
-              <br /><br />
-            {% endif %}
-          </div>
+      <div class="mb-2">
+        {% if song_name %}
+          <span>Your searched song: </span> <br />
+          <iframe src="https://open.spotify.com/embed/track/{{song_id}}" 
+            width="300" height="80" frameborder="0" allowtransparency="true" 
+            allow="encrypted-media">
+          </iframe>
+        {% endif %}
+      </div>
+      <div class="mb-2">
+        {% if song_name %}
+          <span>Not the correct track? </span> <br />
+          <a class="btn btn-primary" href="{% url 'editpr' profile.user_id.id %}">Search Again</a>
+          <br /><br />
+        {% endif %}
+      </div>
+      <div class="row justify-content-center d-flex">
+        <button class="btn btn-lg btn-success" type="submit" form="updateProfileForm">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script type="text/javascript">
     /**
