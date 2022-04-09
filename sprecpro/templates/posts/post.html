@@ -1,0 +1,157 @@
+{% extends 'layouts/app.html' %}
+{% load like_tags %}
+{% block content %}
+
+<div class="container py-2">
+    <div class="row justify-content-center d-flex">
+        <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-7">
+                <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                <span><b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</span>
+                </div>
+                {% if post.user_id == request.user %}
+                    <div class="col-5 d-flex">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary mr-2 ml-auto" data-toggle="modal" data-target="#exampleModal">
+                    Edit 
+                    </button>
+                    <form type="POST" action="{% url 'post.edit' post.id %}">
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <div class="mb-2">
+                                <label class="form-label">Title</label>
+                                <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Description</label>
+                                <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
+                            </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </form>
+                    <form type="POST" action="{% url 'post.delete' post.id %}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
+            <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            <p class="card-text">{{ post.description }}</p>
+            <div class="mb-2">
+                {% if post.rec_song_id %}
+                <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                </iframe>
+                {% endif %}
+            </div>
+            <div class="mb-2">
+                {% if post.rec_album_id %}
+                <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                </iframe>
+                {% endif %}
+            </div>
+            </div>
+            <hr>
+            <div class="card-subtitle d-flex flex-row mt-1 mb-3 mx-1">
+                {% isLiked post user as liked %}
+                <span class="ml-2">
+                {% if liked %}
+                    <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                    </form>
+                {% else %}
+                    <form action="{% url 'like_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                    </form>
+                {% endif %}
+                </span>
+                <button class="btn btn-secondary ml-2" id="commentButton">Comment</button> 
+                <button class="btn btn-secondary ml-2">Share</button>
+            </div>
+            <form class="mx-2" method="POST" action="{% url 'comment' post.id %}" id="commentForm">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <textarea name="body" rows="3" type="text" class="form-control m-1" placeholder="Reply..." maxlength="240" oninput="displayCharsLeft(this, 240)" required></textarea>
+                    <div class="d-inline mb-2 ml-2 text-secondary" id="charsLeft">240</div>
+                </div>
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="btn btn-primary mt-1 ml-1">Submit</button>
+            </form>
+            <hr>
+            <div class="mb-2 mx-2">
+                <h4><b>Comments</b></h4>
+                {% if not comments %}
+                    <div class="justify-content-center d-flex text-secondary m-4"><p class="mt-2">No comments yet...</p></div>
+                {% else %}
+                {% for comment in comments %}
+                <div class="card mt-2">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                        <!-- <img src="{{ comment.user_id.profile.avatar }}" width="25" height="25" /> !-->
+                        <span class="col-8"><b>{{ comment.user_id.first_name }}</b> @{{ comment.user_id.first_name }}</span>
+                        {% if comment.user_id == request.user %}
+                        <form class="col-4 d-flex" method="POST" action="{% url 'comment.delete' comment.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button class="btn btn-danger ml-auto" type="submit">Delete</button>
+                        </form>
+                        {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-text"><p class="m-2">{{ comment.body }}</p></div>
+                </div>
+                {% endfor %}
+                <div class="mb-2"></div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+    </div>
+    <br/>
+</div>
+<script type="text/javascript">
+    /**
+    * Take an HTML Input field (textfield, textarea etc) and a char count ex 150
+    * And display the how many chars the user can still type, as they type.
+    */
+    function displayCharsLeft(element, countFrom) {
+      var textInput = element.value.length;
+      var charactersLeft = countFrom - textInput;
+      document.getElementById('charsLeft').innerHTML = charactersLeft;
+    }
+
+    const commentButton = document.getElementById('commentButton');
+    const commentForm = document.getElementById('commentForm')
+    $(commentForm).hide()
+    commentButton.onclick = () => {
+        $(commentForm).toggle("fast");
+    }
+</script>
+{% endblock %}
