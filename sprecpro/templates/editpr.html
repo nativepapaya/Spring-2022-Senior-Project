@@ -2,6 +2,89 @@
 
 {% block content %}
 
-<h1>EDIT YOUR PROFILE HERE</h1>
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-warning alert-dismissable" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="container py-4">
+  <div class="row justify-content-center d-flex">
+    <div class="col-md-6">
+      <h5 class="mb-2 py-1">Update Profile Details</h5>
+      <form type="POST" action="{% url 'updateProfile' user.id %}" id="updateProfileForm">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-2">
+              <label class="form-label">Age</label>
+              <input class="form-control" type="number" name="age" placeholder="Age"></input>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-2">
+              <label class="form-label">Pronouns</label>
+              <input class="form-control" type="text" name="pronouns" placeholder="pronouns"></input>
+            </div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Bio</label>
+          <textarea class="form-control" type="text" name="bio" placeholder="Bio" maxlength="256" oninput="displayCharsLeft(this, 256)"></textarea>
+          <div class="d-inline mb-2" id="charsLeft"></div>
+        </div>
+        <input type="hidden" value="{{ song_id }}" name="featured_track"></input>
+      </form>
+      <hr/>
+      <div class="mb-2">
+        <h5>Search for a featured song!</h5>
+        <i><span class="text-muted">(Optional)</span></i>
+        <form type="GET" action="{% url 'searchForFeatured' profile.user_id.id %}">
+          <div class="mb-2">
+            <input class="form-control" type="text" name="song_name" id="song_box" placeholder="Song Name"></input>
+          </div>
+          <div class="mb-2">
+            <input class="form-control" type="text" name="artist_name" id="album_box" placeholder="Artist Name"></input>
+          </div> 
+          <button class="btn btn-primary">Search</button>
+        </form>  
+      </div>
+      <div class="mb-2">
+        {% if song_name %}
+          <span>Your searched song: </span> <br />
+          <iframe src="https://open.spotify.com/embed/track/{{song_id}}" 
+            width="300" height="80" frameborder="0" allowtransparency="true" 
+            allow="encrypted-media">
+          </iframe>
+        {% endif %}
+      </div>
+      <div class="mb-2">
+        {% if song_name %}
+          <span>Not the correct track? </span> <br />
+          <a class="btn btn-primary" href="{% url 'editpr' profile.user_id.id %}">Search Again</a>
+          <br /><br />
+        {% endif %}
+      </div>
+      <div class="row justify-content-center d-flex">
+        <button class="btn btn-lg btn-success" type="submit" form="updateProfileForm">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+    /**
+    * Take an HTML Input field (textfield, textarea etc) and a char count ex 150
+    * And display the how many chars the user can still type, as they type.
+    */
+    function displayCharsLeft(element, countFrom) {
+      var textInput = element.value.length;
+      var charactersLeft = countFrom - textInput;
+      document.getElementById('charsLeft').innerHTML = "Characters left: " + charactersLeft;
+    }
+  </script>
 
 {% endblock %}

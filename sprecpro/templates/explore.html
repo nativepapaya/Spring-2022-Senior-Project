@@ -1,7 +1,7 @@
 {% extends 'layouts/app.html' %}
 {% load like_tags %}
 {% block content %}
-<div class="container d-flex justify-content-center">
+<div class="d-flex justify-content-center container" style="max-width:90vw">
 
     <!--Filters-->
     <div class="col-2 bg-dark text-white">
@@ -9,45 +9,106 @@
     </div>
 
     <!--Main content-->
-    <div class="infinite-container col-8 bg-light" style="min-height: 100vh">
+    <div class="infinite-container col-6 p-4 bg-light" style="min-height: 100vh">
 
       <!--Create posts-->
       {% for post in posts %}
-      <div class="infinite-item">
-        <div class="card">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><img src="{{ post.profile.avatar }}" style="width:32px">
-              <b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</li>
-            <li class="list-group-item">
-                {{ post.description }}
-                <br/>
-                <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-            </li>
-            <li class="list-group-item d-flex align-items-center">
+      <div class="row justify-content-center d-flex infinite-item mb-4">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <div class="row align-items-center">
+                  <div class="col-7">
+                  <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                  <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}</span>
+                  </div>
+                  {% if post.user_id == request.user %}
+                      <div class="col-5 d-flex">
+                      <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-primary mr-2 ml-auto" data-toggle="modal" data-target="#exampleModal">
+                      Edit 
+                      </button>
+                      <form type="POST" action="{% url 'post.edit' post.id %}">
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                              </div>
+                              <div class="modal-body">
+                              <div class="mb-2">
+                                  <label class="form-label">Title</label>
+                                  <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
+                              </div>
+                              <div class="mb-2">
+                                  <label class="form-label">Description</label>
+                                  <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
+                              </div>
+                              </div>
+                              <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Edit</button>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                      </form>
+                      <form type="POST" action="{% url 'post.delete' post.id %}">
+                      <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                      </div>
+                  {% endif %}
+              </div>
+              </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text">{{ post.description }}</p>
+              <div class="mb-2">
+                {% if post.rec_song_id %}
+                  <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% endif %}
+              </div>
+              <div>
+                {% if post.rec_album_id %}
+                  <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% endif %}
+              </div>
+            </div>
+            <hr>
+            <div class="card-subtitle d-flex flex-row">
               {% isLiked post user as liked %}
+              <span style="margin:0px 0px 10px 10px">
               {% if liked %}
-              <div style="padding-left:10px" class="d-flex flex-row align-items-center">
-                {% getLikes post %}
                 <form action="{% url 'unlike_post' post.pk %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="next" value="{{ request.path }}">
-                  <button type="submit" class="btn btn-link" name="post_id" value="{{ post.id }}">Unlike</button>
+                  <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
                 </form>
-              </div>
               {% else %}
-              <div style="padding-left:10px">
                 <form action="{% url 'like_post' post.pk %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="next" value="{{ request.path }}">
-                  <button type="submit" class="btn btn-link" name="post_id" value="{{ post.id }}">Like</button>
+                  <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
                 </form>
-              </div> 
               {% endif %}
-              <div style="padding-left:10px">Comment</div> 
-              <div style="padding-left:10px">Share</div></li>
-          </ul>
+              </span>
+              <form action="{% url 'post.view' post.pk %}">
+                <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">View Post</button>
+              </form> 
+              <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
+            </div>
+          </div>
         </div>
-        <br/>
       </div>
       {% endfor %}
       

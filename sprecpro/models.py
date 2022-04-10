@@ -8,22 +8,29 @@ class Profile(models.Model):
     on_delete=models.CASCADE #on user deletion, profile will cascade delete
   )
   avatar = models.TextField(null=True)
-  pronouns = models.CharField(
-    max_length=9, 
-    choices=[('he/him', 'he/him'), ('she/her', 'she/her'), ('they/them', 'they/them')],
-    null=True
-  )
+  pronouns = models.TextField(null=True)
   age = models.IntegerField(null=True)
   bio = models.TextField(max_length=100, null=True)
+  featured_played_uid = models.TextField(null=True)
   last_played_uid = models.TextField(null=True) #represents the id of the last spotify track played
-  created_at = models.DateTimeField(auto_now_add=True),
-  updated_at = models.DateTimeField(auto_now=True),
+  created_at = models.DateTimeField(auto_now_add=True)
+  edited_at = models.DateTimeField(auto_now=True)
 
   def getId(self):
     return self.id
   
   def getAvatar(self):
     return self.avatar
+
+  def isFollowedBy(self, user):
+    follow = Follow.objects.filter(followee_id = self.user_id, follower_id = user).first()
+    return follow != None
+
+  def getFollowCount(self):
+    return len(Follow.objects.filter(followee_id = self.user_id))
+
+  def getFollowingCount(self):
+    return len(Follow.objects.filter(follower_id = self.user_id))
 
 class Favorite(models.Model):
   id = models.AutoField(primary_key=True) #id of the favorite
@@ -32,7 +39,6 @@ class Favorite(models.Model):
     settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE #on user deletion, profile will cascade delete
   )
-  song_uid = models.TextField(null=True)
   song_name = models.TextField(null=True)
   created_at = models.DateTimeField(auto_now_add=True)
   edited_at = models.DateTimeField(auto_now=True)

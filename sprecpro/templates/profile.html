@@ -1,214 +1,264 @@
 {% extends 'layouts/app.html' %}
-
+{% load like_tags %}
+{% load follow_tags %}
 {% block content %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-warning alert-dismissable" role="alert">
+    {{ message }}
+  </div>
+  {% endfor %}
+{% endif %}
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-warning alert-dismissable" role="alert">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-
-  <div class="container p-2">
-    <div class="main-body">
-    
-          <div class="row gutters-sm">
-            <div class="col-md-4 mb-3">
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-flex flex-column align-items-center text-center">
-                    <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="150">
-                    <div class="mt-3">
-                      <h4>{{ profile.user_id.first_name }}</h4>
-                      <p class="text-muted font-size-sm">View Spotify Page</p>
-
-                      <!-- Use an If statement here. Follow button if it's not the user's profile. Edit Profile if it is-->
-                      {% if request.user == profile.user_id %}
-                      <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
-                      {% else %}
-                      <button class="btn btn-primary">Follow</button>
-                      {% endif %}
-
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mt-3">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6 class="mb-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1.4em" height="1.4em" preserveAspectRatio="xMidYMid meet" viewBox="-4 0 22 16">
-                        <path fill="white" fill-rule="evenodd" stroke="currentColor" d="M8 1.314C12.438-3.248 23.534 4.735 8 15C-7.534 4.736 3.562-3.248 8 1.314z"/>
-                    </svg>
-                    <b>Featured Song:</b></h6>
-                    <span class="text-secondary align-items-left">The Less I Know The Better - Tame Impala</span>
-                  </li> 
-
-                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6 class="mb-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
-                        <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                    </svg>
-                    Followers:</h6>
-                    <span class="text-secondary">1,002,941</span>
-                  </li>
-
-                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6 class="mb-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1.5em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1280 1024">
-                        <path fill="currentColor" d="m63.504 959.76l.002-64.942c0-25.44 19.103-33.424 26.72-36.944l281.04-132.624c20.143-9.248 34.047-28.32 36.752-50.32a63.93 63.93 0 0 0-23.457-57.712c-66.48-53.376-97.456-170.704-97.456-233.185v-159.92c0-66.864 116.4-159.856 224.128-159.856c108.672 0 223.936 91.536 223.936 159.856v159.92c0 61.552-25.6 179.312-94.256 233.376a63.99 63.99 0 0 0-23.967 57.808c2.624 22.16 16.591 41.313 36.847 50.624l162.24 77.248l38.144-54.064l-173.664-81.344c88.656-69.776 118.656-206.849 118.656-283.665v-159.92C799.169 118.176 652.545.241 511.233.241S223.105 118.177 223.105 224.096v159.92c0 69.872 31.888 211.248 121.392 283.088L63.457 799.76S-.495 828.256-.495 863.728v96.032c0 35.344 28.64 63.968 63.951 63.968h639.712l-52-63.984zm948.706-236.253c-13.904-10.912-34.032-8.432-44.912 5.473L830.45 937.684l-85.056-85.073c-12.496-12.496-32.768-12.496-45.264 0s-12.496 32.752 0 45.248l113.136 113.136c12.496 12.496 32.752 12.496 45.248 0c3.04-3.024 5.312-6.544 6.88-10.288l152.304-232.304c10.88-13.904 8.432-34.016-5.488-44.896z"/>
-                    </svg>
-                    Following:</h6>
-                    <span class="text-secondary">2</span>
-                  </li>
-
-                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6 class="mb-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1.5em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="2 0 24 24">
-                        <path fill="currentColor" d="M19.5 4h-3V2.5a.5.5 0 0 0-1 0V4h-7V2.5a.5.5 0 0 0-1 0V4h-3A2.503 2.503 0 0 0 2 6.5v13A2.503 2.503 0 0 0 4.5 22h15a2.502 2.502 0 0 0 2.5-2.5v-13A2.502 2.502 0 0 0 19.5 4zM21 19.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5V11h18v8.5zm0-9.5H3V6.5C3 5.672 3.67 5 4.5 5h3v1.5a.5.5 0 0 0 1 0V5h7v1.5a.5.5 0 0 0 1 0V5h3A1.5 1.5 0 0 1 21 6.5V10z"/>
-                    </svg>
-                    Registered:</h6>
-                    <span class="text-secondary">{{ profile.created_at }}</span>
-                  </li>
-
-                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6 class="mb-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-facebook mr-2 icon-inline text-primary">
-                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                    </svg>Something Else:</h6>
-                    <span class="text-secondary">uhhhhhhhhhhh</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="col-md-8">
-              <div class="card mb-3">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Spotify Name</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                      <!--We access the name THIS WAY because this gets the name of the user who owns the profile
-                        user.first_name access the AUTHENTICATED users name
-                       -->
-                      {{ profile.user_id.first_name }}
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Featured Song</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                      The Less I Know The Better - Tame Impala
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Top Song</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                      {{ top_song }}
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Last Played</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                      {{ last_played_name }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row gutters-sm">
-                <div class="col-md-12 mb-3">
-                  <div class="card h-100">
-                    <div class="card-body">
-                      <h6 class="d-flex align-items-center mb-3">{{ profile.user_id.first_name}} posts</h6>
-                      {% if posts%}
-                        {% for post in posts %}
-                          <div class="row justify-content-center d-flex">
-                            <div class="col-md-8">
-                              <div class="card">
-                                <div class="card-header">
-                                  <img src="{{ post.profile.avatar }}" width="25" height="25" />
-                                  <span><b>{{ post.user_id.first_name }}</b> @{{ post.user_id.first_name }}</span>
-                                  {% if post.user_id == request.user %}
-                                      <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                      Edit 
-                                    </button>
-                                    <form type="POST" action="{% url 'post.edit' post.id %}">
-                                      <!-- Modal -->
-                                      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                          <div class="modal-content">
-                                            <div class="modal-header">
-                                              <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
-                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                              </button>
-                                            </div>
-                                            <div class="modal-body">
-                                              <div class="mb-2">
-                                                <label class="form-label">Title</label>
-                                                <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
-                                              </div>
-                                              <div class="mb-2">
-                                                <label class="form-label">Description</label>
-                                                <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
-                                              </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                              <button type="submit" class="btn btn-primary">Edit</button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </form>
-                                    <form type="POST" action="{% url 'post.delete' post.id %}">
-                                      <button type="submit" class="btn btn-danger">Delete</button>
-                                    </form>
-                                  {% endif %}
-                                </div>
-                                <div class="card-body">
-                                  <h5 class="card-title">{{ post.title }}</h5>
-                                  <p class="card-text">{{ post.description }}</p>
-                                  <div class="mb-2">
-                                    {% if post.rec_song_id %}
-                                      <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
-                                        width="300" height="80" frameborder="0" allowtransparency="true" 
-                                        allow="encrypted-media">
-                                      </iframe>
-                                    {% endif %}
-                                  </div>
-                                  <div class="mb-2">
-                                    {% if post.rec_album_id %}
-                                      <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
-                                        width="300" height="80" frameborder="0" allowtransparency="true" 
-                                        allow="encrypted-media">
-                                      </iframe>
-                                    {% endif %}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <br />
-                        {% endfor %}  
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-                </div>
+<div class="container p-2">
+  <div class="main-body">
+    <div class="row gutters-sm">
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center">
+              <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="150">
+              <div class="mt-3">
+                <h4>{{ profile.user_id.first_name }}</h4>
+                <p class="text-muted font-size-sm">View Spotify Page</p>
+                <!-- Use an If statement here. Follow button if it's not the user's profile. Edit Profile if it is-->
+                {% if request.user == profile.user_id %}
+                  <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
+                {% else %}
+                  {% isFollowedBy profile user as followedBy %}
+                  {% if followedBy %}
+                    <form action="{% url 'unfollow' profile.user_id.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="btn btn-danger"><b>Unfollow</b></button> 
+                    </form>
+                  {% else %}
+                    <form action="{% url 'follow' profile.user_id.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="btn btn-primary"><b>Follow</b></button> 
+                    </form>
+                  {% endif %}
+                {% endif %}
               </div>
             </div>
           </div>
         </div>
+        <div class="card mt-3">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                  <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                </svg>
+                Followers:
+              </h6>
+              <span class="text-secondary">{% getFollowCount profile %}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1.5em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1280 1024">
+                  <path fill="currentColor" d="m63.504 959.76l.002-64.942c0-25.44 19.103-33.424 26.72-36.944l281.04-132.624c20.143-9.248 34.047-28.32 36.752-50.32a63.93 63.93 0 0 0-23.457-57.712c-66.48-53.376-97.456-170.704-97.456-233.185v-159.92c0-66.864 116.4-159.856 224.128-159.856c108.672 0 223.936 91.536 223.936 159.856v159.92c0 61.552-25.6 179.312-94.256 233.376a63.99 63.99 0 0 0-23.967 57.808c2.624 22.16 16.591 41.313 36.847 50.624l162.24 77.248l38.144-54.064l-173.664-81.344c88.656-69.776 118.656-206.849 118.656-283.665v-159.92C799.169 118.176 652.545.241 511.233.241S223.105 118.177 223.105 224.096v159.92c0 69.872 31.888 211.248 121.392 283.088L63.457 799.76S-.495 828.256-.495 863.728v96.032c0 35.344 28.64 63.968 63.951 63.968h639.712l-52-63.984zm948.706-236.253c-13.904-10.912-34.032-8.432-44.912 5.473L830.45 937.684l-85.056-85.073c-12.496-12.496-32.768-12.496-45.264 0s-12.496 32.752 0 45.248l113.136 113.136c12.496 12.496 32.752 12.496 45.248 0c3.04-3.024 5.312-6.544 6.88-10.288l152.304-232.304c10.88-13.904 8.432-34.016-5.488-44.896z"/>
+                </svg>
+                Following:
+              </h6>
+              <span class="text-secondary">{% getFollowingCount profile %}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1.5em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="2 0 24 24">
+                  <path fill="currentColor" d="M19.5 4h-3V2.5a.5.5 0 0 0-1 0V4h-7V2.5a.5.5 0 0 0-1 0V4h-3A2.503 2.503 0 0 0 2 6.5v13A2.503 2.503 0 0 0 4.5 22h15a2.502 2.502 0 0 0 2.5-2.5v-13A2.502 2.502 0 0 0 19.5 4zM21 19.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5V11h18v8.5zm0-9.5H3V6.5C3 5.672 3.67 5 4.5 5h3v1.5a.5.5 0 0 0 1 0V5h7v1.5a.5.5 0 0 0 1 0V5h3A1.5 1.5 0 0 1 21 6.5V10z"/>
+                </svg>
+                Registered:
+              </h6>
+              <span class="text-secondary">{{ profile.created_at }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                Bio:
+              </h6>
+              <span class="text-secondary">{{ profile.bio }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                Age:
+              </h6>
+              <span class="text-secondary">{{ profile.age }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                Pronouns:
+              </h6>
+              <span class="text-secondary">{{ profile.pronouns }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Spotify Name</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                <!--We access the name THIS WAY because this gets the name of the user who owns the profile
+                  user.first_name access the AUTHENTICATED users name
+                  -->
+                {{ profile.user_id.first_name }}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Featured Song</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                {% if profile.featured_played_uid != None %}
+                  <iframe src="https://open.spotify.com/embed/track/{{profile.featured_played_uid}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% else %}
+                  <span>None Provided</span>
+                {% endif %}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Top Song</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                {{ top_song }}
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Last Played</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                {{ last_played_name }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row gutters-sm">
+          <div class="col-md-12 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <h6 class="d-flex align-items-center mb-3">{{ profile.user_id.first_name}} posts</h6>
+                {% if posts %}
+                  {% for post in posts %}
+                  <div class="row justify-content-center d-flex">
+                    <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-7">
+                            <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                            <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}</span>
+                            </div>
+                            {% if post.user_id == request.user %}
+                                <div class="col-5 d-flex">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary mr-2 ml-auto" data-toggle="modal" data-target="#exampleModal">
+                                Edit 
+                                </button>
+                                <form type="POST" action="{% url 'post.edit' post.id %}">
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body">
+                                        <div class="mb-2">
+                                            <label class="form-label">Title</label>
+                                            <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Description</label>
+                                            <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
+                                        </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                </form>
+                                <form type="POST" action="{% url 'post.delete' post.id %}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                        </div>
+                        <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.description }}</p>
+                        <div class="mb-2">
+                            {% if post.rec_song_id %}
+                            <iframe src="https://open.spotify.com/embed/track/{{post.rec_song_id}}" 
+                                width="300" height="80" frameborder="0" allowtransparency="true" 
+                                allow="encrypted-media">
+                            </iframe>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if post.rec_album_id %}
+                            <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
+                                width="300" height="80" frameborder="0" allowtransparency="true" 
+                                allow="encrypted-media">
+                            </iframe>
+                            {% endif %}
+                        </div>
+                        </div>
+                        <hr>
+                        <div class="card-subtitle d-flex flex-row mt-1 mb-3 mx-1">
+                            {% isLiked post user as liked %}
+                            <span class="ml-2">
+                            {% if liked %}
+                                <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                                </form>
+                            {% else %}
+                                <form action="{% url 'like_post' post.pk %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                                </form>
+                            {% endif %}
+                            </span>
+                            <form action="{% url 'post.view' post.pk %}">
+                              <button type="submit" class="btn btn-secondary ml-2">View Post</button>
+                            </form> 
+                            <button class="btn btn-secondary ml-2">Share</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <br/>
+                  {% endfor %}
+                {% else %}
+                  <span>This user has no posts</span>  
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 {% endblock %}
