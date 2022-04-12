@@ -20,7 +20,9 @@
               <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="150">
               <div class="mt-3">
                 <h4>{{ profile.user_id.first_name }}</h4>
-                <p class="text-muted font-size-sm">View Spotify Page</p>
+                <p class="text-muted font-size-sm">
+                  <a href="https://open.spotify.com/user/{{ profile.user_id.first_name }}" target="_blank">View Spotify Page</a>
+                </p>
                 <!-- Use an If statement here. Follow button if it's not the user's profile. Edit Profile if it is-->
                 {% if request.user == profile.user_id %}
                   <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
@@ -45,8 +47,19 @@
             </div>
           </div>
         </div>
+      <!-- End Top Left Card -->
+
+      <!-- BOTTOM LEFT CARD-->
         <div class="card mt-3">
           <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">Spotify Name:</h6>
+              <span class="text-secondary">
+                <!--We access the name THIS WAY because this gets the name of the user who owns the profile
+                  user.first_name access the AUTHENTICATED users name-->
+                {{ profile.user_id.first_name }}
+              </span>
+            </li>
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
               <h6 class="mb-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
@@ -95,21 +108,12 @@
           </ul>
         </div>
       </div>
+    <!-- End Bottom Left Card -->
+
+    <!-- TOP RIGHT CARD -->
       <div class="col-md-8">
         <div class="card mb-3">
           <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <h6 class="mb-0">Spotify Name</h6>
-              </div>
-              <div class="col-sm-9 text-secondary">
-                <!--We access the name THIS WAY because this gets the name of the user who owns the profile
-                  user.first_name access the AUTHENTICATED users name
-                  -->
-                {{ profile.user_id.first_name }}
-              </div>
-            </div>
-            <hr>
             <div class="row">
               <div class="col-sm-3">
                 <h6 class="mb-0">Featured Song</h6>
@@ -145,6 +149,9 @@
             </div>
           </div>
         </div>
+      <!-- End Top Right Card -->
+
+      <!-- BOTTOM RIGHT CARD (Posts) -->
         <div class="row gutters-sm">
           <div class="col-md-12 mb-3">
             <div class="card h-100">
@@ -260,6 +267,8 @@
             </div>
           </div>
         </div>
+        <!-- End Bottom Right Card -->
+
       </div>
     </div>
   </div>
