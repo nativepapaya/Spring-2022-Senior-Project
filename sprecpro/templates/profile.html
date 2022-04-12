@@ -135,7 +135,12 @@
                 <h6 class="mb-0">Top Song</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                {{ top_song }}
+                {% if top_song_id != None %}
+                  <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% endif %}
               </div>
             </div>
             <hr>
@@ -144,7 +149,12 @@
                 <h6 class="mb-0">Last Played</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                {{ last_played_name }}
+                {% if last_played != None %}
+                  <iframe src="https://open.spotify.com/embed/track/{{last_played}}" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    allow="encrypted-media">
+                  </iframe>
+                {% endif %}
               </div>
             </div>
           </div>

@@ -226,8 +226,8 @@ def profile(request, user_id):
     return render(request, 'profile.html', {
       'posts': user_posts,
       'profile' : profile,
-      'top_song': song_data['top_song'],
-      'last_played_name': song_data['last_played_name']
+      'top_song_id': song_data['top_song_id'],
+      'last_played': song_data['last_played']
     })
   
   #if the user doesn't exist, go back to welcome
@@ -338,7 +338,7 @@ def getUserSongData(user):
 
   #sends a request to the endpoint with the filters for getting the users top song
   response = requests.get(
-    url = "	https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=1",
+    url = "https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=1",
     headers = {
       'Authorization': 'Bearer ' + token
     },
@@ -349,8 +349,10 @@ def getUserSongData(user):
   #parses the json data and stores the top song
   try:
     top_song = data['items'][0]['artists'][0]['name'] + ': ' + data['items'][0]['name']
+    top_song_id = data['items'][0]['id']
   except:
     top_song = 'Could not find at this time!'
+    top_song_id = None
   #sends a request to the endpoint with filters for getting the users most recently listened to song
   response = requests.get(
     url = "	https://api.spotify.com/v1/me/player/recently-played?limit=1",
@@ -367,13 +369,14 @@ def getUserSongData(user):
     last_played = data['items'][0]['track']['id']
     last_played_name = data['items'][0]['track']['artists'][0]['name'] + ': ' + data['items'][0]['track']['name']
   except:
-    last_played = 'Could not find at this time!'
+    last_played = None
     last_played_name = 'Could not find at this time!'
 
   return {
     'top_song' : top_song,
     'last_played': last_played,
-    'last_played_name': last_played_name
+    'last_played_name': last_played_name,
+    'top_song_id': top_song_id
   }
 
 ##################################
