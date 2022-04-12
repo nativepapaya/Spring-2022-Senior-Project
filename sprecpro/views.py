@@ -12,6 +12,9 @@ import random
 def welcome(request):
   return render(request, 'welcome.html', {})
 
+def about(request):
+  return render(request, 'about.html', {})
+
 def login(request):
   return render(request, 'login_page.html', {})
 
@@ -217,7 +220,7 @@ def profile(request, user_id):
       #setattr(profile, 'last_played_uid', song_data['last_played'])
       profile.save()
     
-    user_posts = Post.objects.filter(user_id = user_id)
+    user_posts = Post.objects.filter(user_id = user_id).order_by('-id')
 
     #return the view with the user's profile information
     return render(request, 'profile.html', {
