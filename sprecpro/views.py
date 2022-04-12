@@ -212,7 +212,7 @@ def profile(request, user_id):
       )
     
     #get the users most recently played song and set uid field
-    song_data = getUserSongData(request.user)
+    song_data = getUserSongData(user)
     if not song_data['last_played'] == None or song_data['last_played'] == '':
       #setattr(profile, 'last_played_uid', song_data['last_played'])
       profile.save()

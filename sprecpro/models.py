@@ -60,8 +60,8 @@ class Post(models.Model):
   description = models.TextField(null=True, max_length=240)
   rec_song_id = models.TextField(null=True)
   rec_album_id = models.TextField(null=True)
-  created_at = models.DateTimeField(auto_now_add=True),
-  updated_at = models.DateTimeField(auto_now=True),
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
 
   def isLiked(self, user):
     like = Like.objects.filter(user_id = user, post_id = self).first()
@@ -85,8 +85,8 @@ class Like(models.Model):
     choices=[('Like', 'Like'), ('Dislike', 'Dislike')],
     null=False
   )
-  created_at = models.DateTimeField(auto_now_add=True),
-  updated_at = models.DateTimeField(auto_now=True),
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
 
 class Comment(models.Model):
   id = models.AutoField(primary_key=True)
@@ -99,8 +99,8 @@ class Comment(models.Model):
     on_delete=models.CASCADE
   )
   body = models.TextField(null=False, max_length=240)
-  created_at = models.DateTimeField(auto_now_add=True),
-  updated_at = models.DateTimeField(auto_now=True),
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
 
 class Follow(models.Model):
   id = models.AutoField(primary_key=True)
@@ -114,5 +114,5 @@ class Follow(models.Model):
     on_delete=models.CASCADE,
     related_name='followee_id'
   )
-  created_at = models.DateTimeField(auto_now_add=True),
-  updated_at = models.DateTimeField(auto_now=True),
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)

@@ -20,7 +20,9 @@
               <div class="row align-items-center">
                   <div class="col-7">
                   <img src="{{ post.profile.avatar }}" width="25" height="25" />
-                  <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}</span>
+                  <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}
+                    <span class="text-secondary">{{ post.created_at }}</span>
+                  </span>
                   </div>
                   {% if post.user_id == request.user %}
                       <div class="col-5 d-flex">

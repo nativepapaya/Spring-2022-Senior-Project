@@ -25,7 +25,9 @@
               <div class="row align-items-center">
                   <div class="col-7">
                   <img src="{{ post.profile.avatar }}" width="25" height="25" />
-                  <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}</span>
+                  <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}
+                    <span class="text-secondary">{{ post.created_at }}</span>
+                  </span>
                   </div>
                   {% if post.user_id == request.user %}
                       <div class="col-5 d-flex">
@@ -80,7 +82,7 @@
                   </iframe>
                   {% endif %}
               </div>
-              <div class="mb-2">
+              <div>
                   {% if post.rec_album_id %}
                   <iframe src="https://open.spotify.com/embed/album/{{post.rec_album_id}}" 
                       width="300" height="80" frameborder="0" allowtransparency="true" 
