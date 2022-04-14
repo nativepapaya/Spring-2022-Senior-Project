@@ -14,6 +14,7 @@
                     <span class="text-secondary">{{ post.created_at }}</span>
                 </span>
                 </div>
+                {% if not user.is_anonymous %}
                 {% if post.user_id == request.user %}
                     <div class="col-5 d-flex">
                     <!-- Button trigger modal -->
@@ -54,6 +55,7 @@
                     </form>
                     </div>
                 {% endif %}
+                {% endif %}
             </div>
             </div>
             <div class="card-body">
@@ -78,23 +80,39 @@
             </div>
             <hr>
             <div class="card-subtitle d-flex flex-row mt-1 mb-3 mx-1">
-                {% isLiked post user as liked %}
-                <span class="ml-2">
-                {% if liked %}
-                    <form action="{% url 'unlike_post' post.pk %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
-                    </form>
+                {% if user.is_anonymous %}
+                    <span class="ml-2">
+                        <form action="{% url 'login' %}" method="POST">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-primary"><b>{% getLikes post %} Like</b></button> 
+                        </form>
+                    </span>
                 {% else %}
-                    <form action="{% url 'like_post' post.pk %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
-                    </form>
+                {% isLiked post user as liked %}
+                    <span class="ml-2">
+                    {% if liked %}
+                        <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                        </form>
+                    {% else %}
+                        <form action="{% url 'like_post' post.pk %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                        </form>
+                    {% endif %}
+                    </span>
                 {% endif %}
-                </span>
+                {% if not user.is_anonymous %}
                 <button class="btn btn-secondary ml-2" id="commentButton">Comment</button> 
+                {% else %}
+                <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary ml-2">Comment</button> 
+                  </form>
+                {% endif %}
                 <button class="btn btn-secondary ml-2">Share</button>
             </div>
             <form class="mx-2" method="POST" action="{% url 'comment' post.id %}" id="commentForm">

@@ -189,8 +189,8 @@ def deleteFromFavorites(request, id):
 
 def profile(request, user_id):
   #If the user is not logged in
-  if not request.user.is_authenticated:
-    return redirect('login')
+  #if not request.user.is_authenticated:
+    #return redirect('login')
 
   #If not a spotify user (super user), redirect to welcome
   if request.user.is_staff:
