@@ -46,10 +46,11 @@ def favorites(request, user_id):
   #If not a spotify user (super user), redirect to welcome
   if request.user.is_staff:
     return redirect('welcome')
-  
+    
   #The user and profile whos favorites this page belongs to
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
+  print(profile)
 
   if profile is None or user is None:
     return redirect('welcome')
