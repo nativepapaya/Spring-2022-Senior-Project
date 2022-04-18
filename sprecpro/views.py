@@ -10,9 +10,6 @@ import json
 import random
 
 def welcome(request):
-  return render(request, 'welcome.html', {})
-
-def about(request):
   return render(request, 'about.html', {})
 
 def login(request):
