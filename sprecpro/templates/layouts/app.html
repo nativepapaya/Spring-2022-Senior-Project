@@ -55,10 +55,6 @@
               <a class="nav-link active" href="{% url 'explore' %}">
                 <span style="font-size: 20px">Explore</span></a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'about' %}">
-                <span style="font-size: 20px">About</span></a>
-            </li>
         </ul>
       </div>
       {% if user.is_authenticated and not user.is_staff %}
