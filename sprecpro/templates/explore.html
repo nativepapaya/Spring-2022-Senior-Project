@@ -19,7 +19,7 @@
             <div class="card-header">
               <div class="row align-items-center">
                   <div class="col-7">
-                  <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                  <img src="{{ post.profile.avatar }}" width="25" height="25" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"/>
                   <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}
                     <span class="text-secondary">{{ post.created_at }}</span>
                   </span>
