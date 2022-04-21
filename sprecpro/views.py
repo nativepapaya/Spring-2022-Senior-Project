@@ -53,11 +53,14 @@ def favorites(request, user_id):
     return redirect('welcome')
 
   display_all_favorites = Favorite.objects.filter(user_id=user)
+  song_data = getUserSongData(user)
 
   return render(request, 'favorites.html', {
     'user': user,
     'profile': profile,
     'favorites': display_all_favorites,
+    'top_song_id': song_data['top_song_id'],
+    'last_played': song_data['last_played']
   })
   
 def likedSongs(request, user_id):

@@ -1,162 +1,207 @@
 {% extends 'layouts/app.html' %}
-
 {% block content %}
 <div class="container p-2">
   <div class="main-body">
+    <div class="row gutters-sm">
+      <div class="col-md-auto mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center">
+              <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="180" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'">
+              <div class="mt-3">
+                <h4 class="text-dark">Favorites for</h4>
+                <h4><a class="text-dark" href="{% url 'profile' profile.user_id.id %}">{{ profile.user_id.first_name }}</a></h4>
+              </div>
+            </div>
+          </div>
+        </div>
 
-		<div class="row gutters-sm">
+        <!-- [START] Changes the layout of the Favorites Page -->  
+        {% if request.user == user %}
+        {% if favorites %}
+        <div class="card mt-3">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <h6 class="mb-0">
+                <b>Search a SONG to add to FAVORITES</b>
+              </h6>
+            </li>
+            <form type="GET" action="{% url 'search_for_favorites' %}">
+              {% csrf_token %}
+              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <div class="col-xs-4">
+                  <input class="form-control" type="text" name="song_name" id="song_box" width="50px" placeholder="Song Name"></input>
+                  <input class="form-control" type="text" name="artist_name" id="album_box" width="50px" placeholder="Artist Name"></input>
+                </div>
+                <div>
+                  <span class="text-secondary align-items-center">
+                    <button class="btn btn-primary">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      </svg>
+                    </button>
+                  </span>
+                </div>
+              </li>
+            </form>
+          </ul>
+        </div>
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">Search for a song above, then click on<br>the &hearts; to add to your favorites.
+				<br><br>Click on the &#128465; in your list to remove<br>a favorite.</div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <!-- [END] of left column -->
 
-				<div class="col-md-auto mt-3">
+      <div class="col-md-6">
+        {% if songs %}
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <h5>Your searched songs:</h5>
+              </div>
+			  <div class="col">
+				<p class="text-right">
+					<a href="{% url 'favorite' profile.user_id.id %}"><-- Back to Favorites</a>
+				</p>
+			  </div>
+            </div>
+            <div class="row">
+              {% for song in songs %}
+              <div class="col">
+                <br/>
+                <form type="POST" action="{% url 'add_fav' %}">
+                  <iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="235" height="280" 
+                    frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                  <input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
+                  <input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
+                  <input type="hidden" name="user_id" value="{{ user }}"></input>
+                  <input class="btn btn-default btn-outline-secondary" type="submit" value="&#10084"/>
+                </form>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="card mt-3">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Favorite Track</th>
+                    <th scope="col">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for favorite in favorites %}                
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="350" height="80" 
+                      frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></td>
+                    {% if request.user == user %}
+                    <td>
+                      <form method="POST" action="{% url 'delete_fav' favorite.id %}">
+                        {% csrf_token %}
+                        <input class="btn btn-default btn-outline-secondary" type="submit" value="&#128465"/>
+                      </form>
+                    </td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </li>
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      <!-- [END] of right column -->
+      {% else %}		<!-- [MIDDLE] Changes the layout of the Favorites Page --> 
+    </div>
+    <!--
+      [END] When looking at OWN favorites page
+      -->
 
-					<div class="card">
-						<div class="card-body">
-							<div class="d-flex flex-column align-items-center text-center">
-								<img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="300" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'">
-								<div class="mt-3">
-									<h4><a class="text-dark" href="{% url 'profile' profile.user_id.id %}">{{ profile.user_id.first_name }}</a></h4>
-								</div>
-							</div>
-						</div>
-					</div>
+    <!--
+      [START] When looking at OTHER'S favorites page
+      -->
+    <div class="col-md-8 mt-3 pb-3">
+      <div class="row">
+        <div class="col-sm-3">
+          <h6 class="mb-0">Featured Song</h6>
+        </div>
+        <div class="col-sm-9 text-secondary">
+          {% if profile.featured_played_uid != None %}
+          <iframe src="https://open.spotify.com/embed/track/{{profile.featured_played_uid}}" 
+            width="400" height="80" frameborder="0" allowtransparency="true" 
+            allow="encrypted-media">
+          </iframe>
+          {% else %}
+          <span>None Provided</span>
+          {% endif %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-sm-3">
+          <h6 class="mb-0">Top Song</h6>
+        </div>
+        <div class="col-sm-9 text-secondary">
+          {% if top_song_id != None %}
+          <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
+            width="400" height="80" frameborder="0" allowtransparency="true" 
+            allow="encrypted-media">
+          </iframe>
+          {% endif %}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-sm-3">
+          <h6 class="mb-0">Last Played</h6>
+        </div>
+        <div class="col-sm-9 text-secondary">
+          {% if last_played != None %}
+          <iframe src="https://open.spotify.com/embed/track/{{last_played}}" 
+            width="400" height="80" frameborder="0" allowtransparency="true" 
+            allow="encrypted-media">
+          </iframe>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-				<!-- [START] Changes the layout of the Favorites Page -->  
-				{% if request.user == user %}
-
-					{% if favorites %}
-					<div class="card mt-3">
-						<ul class="list-group list-group-flush">
-							<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-								<table class="table">
-										<thead class="thead-dark">
-											<tr>
-													<th scope="col">#</th>
-													<th scope="col">Track</th>
-													<th scope="col">Delete</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for favorite in favorites %}                
-											<tr>
-												<th scope="row">{{ forloop.counter }}</th>
-												<td><iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="350" height="80" 
-														frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></td>
-												{% if request.user == user %}
-													<td>
-														<form method="POST" action="{% url 'delete_fav' favorite.id %}">
-																{% csrf_token %}
-																<input class="btn btn-default btn-outline-secondary" type="submit" value="&#128465"/>
-														</form>
-													</td>
-												{% endif %}
-											</tr>
-											{% endfor %}
-										</tbody>
-								</table>
-							</li>
-						</ul>
-					</div>
-					{% endif %}
-				
-				</div> <!-- [END] of left column -->
-				
-				
-				<div class="col-md-6">
-						
-					<div class="card mt-3">
-						<ul class="list-group list-group-flush">
-							<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6 class="mb-0">
-									<b>Search a SONG to add to FAVORITES</b></h6>
-							</li>
-									<form type="GET" action="{% url 'search_for_favorites' %}">
-											{% csrf_token %}
-											<li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-													<div class="col-xs-4">
-															<input class="form-control" type="text" name="song_name" id="song_box" width="50px" placeholder="Song Name"></input>
-															<input class="form-control" type="text" name="artist_name" id="album_box" width="50px" placeholder="Artist Name"></input>
-													</div>
-													<div>
-															<span class="text-secondary align-items-center"><button class="btn btn-primary">
-																	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-																	<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-																	</svg></button>
-															</span>
-													</div>
-											</li>
-									</form>
-						</ul>
-					</div>
-
-					{% if songs %}
-					<div class="card mt-3">
-						<div class="card-body">
-
-							<div class="row">
-									<div class="col">
-									<h3>Your searched songs:</h3>
-									</div>
-							</div>
-
-							<div class="row">
-									{% for song in songs %}
-									<div class="col">
-											<br/>
-											<form type="POST" action="{% url 'add_fav' %}">
-													<iframe src="https://open.spotify.com/embed/track/{{ song.song_id }}" width="235" height="280" 
-													frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-													<input type="hidden" name="song_id" value="{{ song.song_id }}"></input>
-													<input type="hidden" name="song_name" value="{{ song.song_name }}"></input>
-													<input type="hidden" name="user_id" value="{{ user }}"></input>
-													<input class="btn btn-default btn-outline-secondary" type="submit" value="&#10084"/>
-											</form>
-									</div>
-									{% endfor %}
-							</div>
-
-						</div>
-					</div>
-					{% else %}
-					<div class="card mt-3">
-						<div class="card-body">
-							<div class="row">
-								<div class="col">Search a song above, and then click on the &hearts; to add to your favorites</div>
-							</div>
-						</div>
-					</div>
-					{% endif %}
-
-				</div>	<!-- [END] of right column -->
-
-
-				{% else %}		<!-- [MIDDLE] Changes the layout of the Favorites Page --> 
-		</div>
-	</div>
+<div class="p-3 bg-dark text-white">Favorites</div>
+<div style="padding: 0.5em;">
+  {% if favorites %}
+  <div>
+    {% for favorite in favorites %}
+    <div style="display: inline-block;">
+      <iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="269" height="280" 
+        frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <center>
+    <br/><br/>
+    <h1 style="color: rgba(0, 0, 0, 0.5);">No favorite songs yet</h1>
+  </center>
+  {% endif %}
 </div>
 <!--
-		[END] When looking at OWN favorites page
--->
-<!--
-		[START] When looking at OTHER'S favorites page
--->
-			
-			<div style="margin: 0.5em; padding: 0.5em;">
-				<div class="p-3 mb-3 bg-dark text-white">Favorites</div>
-				{% if favorites %}
-				<div>
-					{% for favorite in favorites %}
-						<div style="display: inline-block;">
-							<iframe src="https://open.spotify.com/embed/track/{{ favorite.song_uid }}" width="269" height="280" 
-							frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-						</div>
-					{% endfor %}
-				</div>
-				{% else %}
-					<center><br/><br/><h1 style="color: rgba(0, 0, 0, 0.5);">No favorite songs yet</h1></center>
-				{% endif %}
-			</div>
-			
-<!--
-		[END] When looking at OTHER'S favorites page
--->
-
-				{% endif %}		<!-- [END] Changes the layout of the Favorites Page --> 
+  [END] When looking at OTHER'S favorites page
+  -->
+{% endif %}		<!-- [END] Changes the layout of the Favorites Page --> 
 {% endblock %}
