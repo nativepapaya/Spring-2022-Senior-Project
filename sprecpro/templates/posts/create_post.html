@@ -1,6 +1,14 @@
 {% extends 'layouts/app.html' %}
 
 {% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-danger alert-dismissable" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
   {%if song_name is None or album_name is None %}
     <div class="container py-4">
       <div class="row justify-content-center">

@@ -1,6 +1,13 @@
 {% extends 'layouts/app.html' %}
 
 {% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-danger alert-dismissable" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
 <div class="container p-2">
   <div class="main-body">
 
