@@ -10,9 +10,6 @@ import json
 import random
 
 def welcome(request):
-  return render(request, 'welcome.html', {})
-
-def about(request):
   return render(request, 'about.html', {})
 
 def login(request):
@@ -46,20 +43,24 @@ def favorites(request, user_id):
   #If not a spotify user (super user), redirect to welcome
   if request.user.is_staff:
     return redirect('welcome')
-  
+    
   #The user and profile whos favorites this page belongs to
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
+  print(profile)
 
   if profile is None or user is None:
     return redirect('welcome')
 
   display_all_favorites = Favorite.objects.filter(user_id=user)
+  song_data = getUserSongData(user)
 
   return render(request, 'favorites.html', {
     'user': user,
     'profile': profile,
     'favorites': display_all_favorites,
+    'top_song_id': song_data['top_song_id'],
+    'last_played': song_data['last_played']
   })
   
 def likedSongs(request, user_id):
@@ -106,19 +107,23 @@ def searchForFavorites(request):
   except:
     print("Request success")
 
-  songs = {}
-  loop = data['tracks']['total']
-  if (data['tracks']['total'] > data['tracks']['limit']):
-    loop = data['tracks']['limit']
-  
-  for i in range(0,loop):
-    song_id = data['tracks']['items'][i]['id']
-    song_name = data['tracks']['items'][i]['name']
+  try:
+    songs = {}
+    loop = data['tracks']['total']
+    if (data['tracks']['total'] > data['tracks']['limit']):
+      loop = data['tracks']['limit']
+    
+    for i in range(0,loop):
+      song_id = data['tracks']['items'][i]['id']
+      song_name = data['tracks']['items'][i]['name']
 
-    songs[i] = {
-      'song_id': song_id,
-      'song_name': song_name
-    }
+      songs[i] = {
+        'song_id': song_id,
+        'song_name': song_name
+      }
+  except:
+    messages.error(request, 'You must provide search criteria!')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
   user = request.user
   profile = Profile.objects.filter(user_id = user).first()
@@ -420,11 +425,15 @@ def searchSpotify(request):
   except:
     print("Request success")
 
-  returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
-  returned_song_name = data['tracks']['items'][0]['name']
-  returned_song_id = data['tracks']['items'][0]['id']
-  returned_album_name = data['tracks']['items'][0]['album']['name']
-  returned_album_id = data['tracks']['items'][0]['album']['id']
+  try:
+    returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
+    returned_song_name = data['tracks']['items'][0]['name']
+    returned_song_id = data['tracks']['items'][0]['id']
+    returned_album_name = data['tracks']['items'][0]['album']['name']
+    returned_album_id = data['tracks']['items'][0]['album']['id']
+  except:
+    messages.error(request, 'You must provide search criteria!')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
   #debug info
   print(
@@ -477,11 +486,15 @@ def searchForFeatured(request, user_id):
       return redirect('welcome')
   except:
     print("Request success")
+    
 
-  returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
-  returned_song_name = data['tracks']['items'][0]['name']
-  returned_song_id = data['tracks']['items'][0]['id']
-
+  try:
+    returned_main_artist_name = data['tracks']['items'][0]['artists'][0]['name']
+    returned_song_name = data['tracks']['items'][0]['name']
+    returned_song_id = data['tracks']['items'][0]['id']
+  except:
+    messages.error(request, 'You must provide search criteria!')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
   #Return back to the same page with the now queried song Data!
   return render(request, 'editpr.html', {
     'profile': profile,
@@ -533,11 +546,11 @@ def storePost(request):
 
   if title == None or  title == '':
     messages.error(request, 'A title is REQUIRED')
-    return render(request, 'posts/create_post.html', {})
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
   
   if len(body) > 240:
     messages.error(request, 'Your description was too long')
-    return render(request, 'posts/create_post.html', {})
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
   post = Post.objects.create(
     user_id = user,

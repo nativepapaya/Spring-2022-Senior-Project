@@ -17,11 +17,11 @@
         <div class="card">
           <div class="card-body">
             <div class="d-flex flex-column align-items-center text-center">
-              <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="150">
+              <img src="{{ profile.avatar }}" alt="Admin" class="rounded-circle" width="150" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'">
               <div class="mt-3">
                 <h4>{{ profile.user_id.first_name }}</h4>
                 <p class="text-muted font-size-sm">
-                  <a href="https://open.spotify.com/user/{{ profile.user_id.first_name }}" target="_blank">View Spotify Page</a>
+                  <a href="https://open.spotify.com/user/{{ profile.user_id }}" target="_blank">View Spotify Page</a>
                 </p>
                 <!-- Use an If statement here. Follow button if it's not the user's profile. Edit Profile if it is-->
                 {% if request.user.is_anonymous %}
@@ -34,20 +34,21 @@
                 {% else %}
                   {% isFollowedBy profile user as followedBy %}
                   {% if followedBy %}
-                    <form action="{% url 'unfollow' profile.user_id.id %}" method="POST">
+                    <form class="form-check-inline" action="{% url 'unfollow' profile.user_id.id %}" method="POST">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.path }}">
                       <button type="submit" class="btn btn-danger mb-2"><b>Unfollow</b></button> 
                     </form>
                   {% else %}
-                    <form action="{% url 'follow' profile.user_id.id %}" method="POST">
+                    <form class="form-check-inline" action="{% url 'follow' profile.user_id.id %}" method="POST">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.path }}">
                       <button type="submit" class="btn btn-primary mb-2"><b>Follow</b></button> 
                     </form>
                   {% endif %}
                 {% endif %}
-                <a class="btn btn-success"  href="{% url 'favorite' user.id %}">Favorites</a>
+                <a class="btn btn-success ml-2" href="{% url 'favorite' profile.user_id.id %}">Favorites</a>
+                </form>
               </div>
             </div>
           </div>
@@ -126,7 +127,7 @@
               <div class="col-sm-9 text-secondary">
                 {% if profile.featured_played_uid != None %}
                   <iframe src="https://open.spotify.com/embed/track/{{profile.featured_played_uid}}" 
-                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
                   </iframe>
                 {% else %}
@@ -142,7 +143,7 @@
               <div class="col-sm-9 text-secondary">
                 {% if top_song_id != None %}
                   <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
-                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
                   </iframe>
                 {% endif %}
@@ -156,7 +157,7 @@
               <div class="col-sm-9 text-secondary">
                 {% if last_played != None %}
                   <iframe src="https://open.spotify.com/embed/track/{{last_played}}" 
-                    width="300" height="80" frameborder="0" allowtransparency="true" 
+                    width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
                   </iframe>
                 {% endif %}
@@ -180,51 +181,11 @@
                         <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col-7">
-                            <img src="{{ post.profile.avatar }}" width="25" height="25" />
+                            <img src="{{ post.profile.avatar }}" width="25" height="25" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'"/>
                             <span><b><a class="text-dark" href="{% url 'profile' post.user_id.id %}">{{ post.user_id.first_name }}</a></b> @{{ post.user_id.first_name }}
                               <span class="text-secondary">{{ post.created_at }}</span>
                             </span>
                             </div>
-                            {% if post.user_id == request.user %}
-                                <div class="col-5 d-flex">
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary mr-2 ml-auto" data-toggle="modal" data-target="#exampleModal">
-                                Edit 
-                                </button>
-                                <form type="POST" action="{% url 'post.edit' post.id %}">
-                                <!-- Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        </div>
-                                        <div class="modal-body">
-                                        <div class="mb-2">
-                                            <label class="form-label">Title</label>
-                                            <input class="form-control" type="text" name="title" id="title" placeholder="Title"></input>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Description</label>
-                                            <input class="form-control" type="text" name="description" id="description" placeholder="Description"></input>
-                                        </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Edit</button>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                </form>
-                                <form type="POST" action="{% url 'post.delete' post.id %}">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                                </div>
-                            {% endif %}
                         </div>
                         </div>
                         <div class="card-body">
