@@ -1,57 +1,62 @@
 {% extends 'layouts/app.html' %}
 {% load like_tags %}
 {% block content %}
-<!DOCTYPE html>
-<html>
-<head>
-	<br>
-	<title>SPECPRO</title>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-	<p class="aligncenter">
-		<img src="https://i.imgur.com/qMOzpT2.png" alt="centered image" />
-	</p>
-	<style>
-		.aligncenter {
-			text-align: center;
-		}
-		</style>
+  <div class="container">
+    <p class="d-flex justify-content-center">
+		  <img src="https://i.imgur.com/qMOzpT2.png" alt="centered image" />
+	  </p>
 
-	<h1 style="text-align:center;">SPECPRO</h1>
-	<h6 style="text-align:center;">Spring 2022 Senior Project</p>
-	<h6 style="text-align:center;">https://github.com/nativepapaya/Spring-2022-Senior-Project</p>
+    <h1 style="text-align:center;">SPECPRO</h1>
+    <h6 style="text-align:center;">Spring 2022 Senior Project</p>
+    <h6 style="text-align:center;">https://github.com/nativepapaya/Spring-2022-Senior-Project</p>
 
-	<br>
+	  <br>
 
-	<div id="wrapperDiv">
-		<h1 style="text-align:center;">
-			<div id="div1" style="padding:20px;background-color:#decddd;float:none">Team</div>
-				<div class="container">
-					<div class="hero">
-						<br>
-						<h5 class="name">Rayniery Hidalgo</h5>
-						<h5 class="name">Kyle Evangelisto</h5>
-						<h5 class="name">Ricky Hankey</h5>
-						<h5 class="name">Malcolm Council</h5>
-						<h5 class="name">Jayvee Lacasandile</h5>
-						<h5 class="name">Ryan Schwegel</h5>
-						<h5 class="name">Nasim Tukhi</h5>
-					</div>
-				</div>
-	<br>
-	<div id="div2" style="padding:20px;background-color:#cedddd;float:none">Features</div>
-		<div class="container">
-			<div class="hero">
-				<br>
-				<h5 class="name">Website utilizes the Spotify API and has the ability to pull data directly from Spotifyh</h5>
-				<h5 class="name">Users are able to log into their own Spotify account</h5>
-				<h5 class="name">User profiles imported from Spotify, including feature songs</h5>
-				<h5 class="name">Interactive favorite system that gives users the ability to add songs directly to their profiel</h5>
-				<h5 class="name">A fully functional comment system, given the users the ability to communicate with each other</h5>
-			</div>
-		</div>
-	</div>
-<body/>
+    <div id="wrapperDiv">
+      <h1 style="text-align:center;">
+      <div id="div1" style="padding:20px;background-color:#decddd;float:none">Team</div>
+      <div class="container">
+        <div class="hero">
+          <br>
+          <h5 class="name">Rayniery Hidalgo</h5>
+          <h5 class="name">Kyle Evangelisto</h5>
+          <h5 class="name">Ricky Hankey</h5>
+          <h5 class="name">Malcolm Council</h5>
+          <h5 class="name">Jayvee Lacasandile</h5>
+          <h5 class="name">Ryan Schwegel</h5>
+          <h5 class="name">Nasim Tukhi</h5>
+        </div>
+      </div>
+      <br>
+      <div id="div2" style="padding:20px;background-color:#cedddd;float:none">Features</div>
+        <div class="container">
+          <div class="hero">
+            <br>
+            <h5 class="name">This application utilizes the Spotify API and has the ability to display custom data about songs, albums and profiles.</h5>
+            <h5 class="name">Users are able to log into this application through their own Spotify account</h5>
+            <h5 class="name">User profilem data is imported from Spotify, including their top songs. Users can also set a custom SPRecoPro, bio, age and featured song</h5>
+            <h5 class="name">Interactive favorite system that gives users the ability to add songs directly to their profile</h5>
+            <h5 class="name">A fully functional comment and like system, given the users the ability to communicate with each other and discuss song reccomendations</h5>
+            <h5 class="name">Full Post CRUD. Create, Read, Update and Delete Posts. Posts can also feature a song and it's album</h5>
+            <br>
+          </div>
+        </div>
+      </div>
+      <div id="div2" style="padding:20px;background-color:#cedddd;float:none"><h1>Technology</h1></div>
+        <div class="container">
+          <div class="hero">
+            <br>
+            <h5 class="name">This application utilizes the following:</h5>
+              <h5>Python's MVC framework Django</h5>
+              <h5>HTML, CSS, Bootstrap and Javascript</h5>
+              <h5>SQh5te for the database</h5>
+              <h5>Github for Repo Hosting</h5>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
