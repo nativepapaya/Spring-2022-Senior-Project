@@ -2,15 +2,9 @@
 {% load like_tags %}
 {% block content %}
 <div class="d-flex justify-content-center container" style="max-width:90vw">
-
-    <!--Filters-->
-    <div class="col-2 bg-dark text-white">
-        Filters:
-    </div>
-
     <!--Main content-->
-    <div class="infinite-container col-6 p-4 bg-light" style="min-height: 100vh">
-
+    <div class="infinite-container col-6 p-2" style="min-height: 100vh">
+      <h1 class="d-flex justify-content-center mb-2 pb-2">Explore</h1>
       <!--Create posts-->
       {% for post in posts %}
       <div class="row justify-content-center d-flex infinite-item mb-4">
@@ -48,22 +42,32 @@
             </div>
             <hr>
             <div class="card-subtitle d-flex flex-row">
-              {% isLiked post user as liked %}
-              <span style="margin:0px 0px 10px 10px">
-              {% if liked %}
-                <form action="{% url 'unlike_post' post.pk %}" method="POST">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ request.path }}">
-                  <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
-                </form>
+              {% if user.is_anonymous %}
+                <span style="margin:0px 0px 10px 10px">
+                  <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button> 
+                  </form>
+                </span>
               {% else %}
-                <form action="{% url 'like_post' post.pk %}" method="POST">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ request.path }}">
-                  <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
-                </form>
-              {% endif %}
-              </span>
+                {% isLiked post user as liked %}
+                <span style="margin:0px 0px 10px 10px">
+                {% if liked %}
+                  <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                  </form>
+                {% else %}
+                  <form action="{% url 'like_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                  </form>
+                {% endif %}
+                </span>
+              {% endif %}  
               <form action="{% url 'post.view' post.pk %}">
                 <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">View Post</button>
               </form>
@@ -90,19 +94,5 @@
           });
       </script>
     </div>
-    
-    <!--Recommended users-->
-    <div class="col-2 bg-dark text-white">
-        <p>Recommended users:</p>
-        <p>user1           +</p>
-        <p>user2           +</p>
-        <p>user3           +</p>
-    </div>
 </div>
-
-<style>
-    body {
-      background: rgb(65, 70, 75); 
-    }
-  </style>
 {% endblock %}

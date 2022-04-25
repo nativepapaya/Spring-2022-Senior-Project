@@ -44,7 +44,6 @@ def favorites(request, user_id):
   #The user and profile whos favorites this page belongs to
   profile = Profile.objects.filter(user_id = user_id).first()
   user = User.objects.filter(id = user_id, is_staff = False).first()
-  print(profile)
 
   if profile is None or user is None:
     return redirect('welcome')
@@ -179,8 +178,8 @@ def deleteFromFavorites(request, id):
 
 def profile(request, user_id):
   #If the user is not logged in
-  if not request.user.is_authenticated:
-    return redirect('login')
+  #if not request.user.is_authenticated:
+    #return redirect('login')
 
   #If not a spotify user (super user), redirect to welcome
   if request.user.is_staff:

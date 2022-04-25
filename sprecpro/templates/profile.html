@@ -24,7 +24,12 @@
                   <a href="https://open.spotify.com/user/{{ profile.user_id }}" target="_blank">View Spotify Page</a>
                 </p>
                 <!-- Use an If statement here. Follow button if it's not the user's profile. Edit Profile if it is-->
-                {% if request.user == profile.user_id %}
+                {% if request.user.is_anonymous %}
+                  <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary mb-2"><b>Follow</b></button> 
+                  </form>
+                {% elif request.user == profile.user_id %}
                   <a class="btn btn-info"  href="{% url 'editpr' user.id %}">Edit Profile</a>
                 {% else %}
                   {% isFollowedBy profile user as followedBy %}
@@ -32,12 +37,14 @@
                     <form class="form-check-inline" action="{% url 'unfollow' profile.user_id.id %}" method="POST">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.path }}">
-                      <button type="submit" class="btn btn-danger"><b>Unfollow</b></button> 
+                      <button type="submit" class="btn btn-danger mb-2"><b>Unfollow</b></button> 
+                    </form>
                   {% else %}
                     <form class="form-check-inline" action="{% url 'follow' profile.user_id.id %}" method="POST">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.path }}">
-                      <button type="submit" class="btn btn-primary"><b>Follow</b></button> 
+                      <button type="submit" class="btn btn-primary mb-2"><b>Follow</b></button> 
+                    </form>
                   {% endif %}
                 {% endif %}
                 <a class="btn btn-success ml-2" href="{% url 'favorite' profile.user_id.id %}">Favorites</a>
@@ -138,9 +145,9 @@
                   <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
                     width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
+                  </iframe>
                 {% else %}
                   <span>No top song to display</span>
-                  </iframe>
                 {% endif %}
               </div>
             </div>
@@ -207,22 +214,31 @@
                         </div>
                         <hr>
                         <div class="card-subtitle d-flex flex-row mt-1 mb-3 mx-1">
-                            {% isLiked post user as liked %}
+                            {% if user.is_anonymous %}
                             <span class="ml-2">
-                            {% if liked %}
-                                <form action="{% url 'unlike_post' post.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.path }}">
-                                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                                <form action="{% url 'login' %}" method="POST">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-primary">{% getLikes post %} Like</button> 
                                 </form>
-                            {% else %}
-                                <form action="{% url 'like_post' post.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.path }}">
-                                <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
-                                </form>
-                            {% endif %}
                             </span>
+                            {% else %}
+                            {% isLiked post user as liked %}
+                                <span class="ml-2">
+                                {% if liked %}
+                                    <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                                    </form>
+                                {% else %}
+                                    <form action="{% url 'like_post' post.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
+                                    </form>
+                                {% endif %}
+                                </span>
+                            {% endif %}
                             <form action="{% url 'post.view' post.pk %}">
                               <button type="submit" class="btn btn-secondary ml-2">View Post</button>
                             </form> 
