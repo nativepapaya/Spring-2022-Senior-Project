@@ -11,8 +11,8 @@
       </div>
     {% endfor %}
   {% endif %}
-
   <div class="container py-2">
+    <h1 class="d-flex justify-content-center mb-2">Home</h1>
     {% if posts %}
       {% for post in posts %}
         {% isFollowedBy post.profile user as following %}
@@ -80,6 +80,11 @@
                 {% endif %}  
                   <form action="{% url 'post.view' post.pk %}">
                     <button type="submit" class="btn btn-secondary ml-2">View Post</button>
+                  </form> 
+                  <form action="{% url 'add_fav' %}">
+                    <input type="hidden" name="song_id" value="{{ post.rec_song_id }}"></input>
+                    <input type="hidden" name="song_name" value=""></input>
+                    <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">Favorite Song</button>
                   </form> 
               </div>
             </div>
