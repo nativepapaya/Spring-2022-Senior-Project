@@ -144,12 +144,12 @@
         </div>
         <div class="col-sm-9 text-secondary">
           {% if profile.featured_played_uid != None %}
-          <iframe src="https://open.spotify.com/embed/track/{{profile.featured_played_uid}}" 
-            width="400" height="80" frameborder="0" allowtransparency="true" 
-            allow="encrypted-media">
-          </iframe>
+            <iframe src="https://open.spotify.com/embed/track/{{profile.featured_played_uid}}" 
+              width="400" height="80" frameborder="0" allowtransparency="true" 
+              allow="encrypted-media">
+            </iframe>
           {% else %}
-          <span>None Provided</span>
+            <span>None Provided</span>
           {% endif %}
         </div>
       </div>
@@ -160,10 +160,12 @@
         </div>
         <div class="col-sm-9 text-secondary">
           {% if top_song_id != None %}
-          <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
-            width="400" height="80" frameborder="0" allowtransparency="true" 
-            allow="encrypted-media">
-          </iframe>
+            <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
+              width="400" height="80" frameborder="0" allowtransparency="true" 
+              allow="encrypted-media">
+            </iframe>
+          {% else %}
+            <span>No top song to display</span>
           {% endif %}
         </div>
       </div>
@@ -174,10 +176,12 @@
         </div>
         <div class="col-sm-9 text-secondary">
           {% if last_played != None %}
-          <iframe src="https://open.spotify.com/embed/track/{{last_played}}" 
-            width="400" height="80" frameborder="0" allowtransparency="true" 
-            allow="encrypted-media">
-          </iframe>
+            <iframe src="https://open.spotify.com/embed/track/{{last_played}}" 
+              width="400" height="80" frameborder="0" allowtransparency="true" 
+              allow="encrypted-media">
+            </iframe>
+          {% else %}
+            <span>No last played to display</span>  
           {% endif %}
         </div>
       </div>
