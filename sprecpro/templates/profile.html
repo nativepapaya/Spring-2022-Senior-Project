@@ -145,6 +145,8 @@
                   <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
                     width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
+                {% else %}
+                  <span>No top song to display</span>
                   </iframe>
                 {% endif %}
               </div>
@@ -160,6 +162,8 @@
                     width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
                   </iframe>
+                {% else %}
+                  <span>No last played to display</span>
                 {% endif %}
               </div>
             </div>

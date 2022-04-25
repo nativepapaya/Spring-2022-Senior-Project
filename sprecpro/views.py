@@ -15,11 +15,8 @@ def welcome(request):
 def login(request):
   return render(request, 'login_page.html', {})
 
-def register(request):
-  return render(request, 'register_page.html', {})
-
 def explore(request):
-  posts_list = Post.objects.all()
+  posts_list = Post.objects.order_by('-id').all()
   page = request.GET.get('page',1)
   paginator = Paginator(posts_list, 7)
 
@@ -62,18 +59,6 @@ def favorites(request, user_id):
     'top_song_id': song_data['top_song_id'],
     'last_played': song_data['last_played']
   })
-  
-def likedSongs(request, user_id):
-  user = User.objects.filter(id = user_id, is_staff = False).first()
-  playlist_id = "37i9dQZF1EUMDoJuT8yJsl"
-  songs = request.playlist(playlist_id, fields=None, market=None, additional_types=('track',))
-  return render(request, 'favorites.html', {
-    'songs' : songs,
-  })
-
-
-#-------------------------------  
-  
 
 #search_for_favorites
 def searchForFavorites(request):
@@ -264,7 +249,6 @@ def editpr(request, user_id):
   })
 
 def updateProfile(request, user_id):
-  print('etenerd update')
   #If the user is not logged in
   if not request.user.is_authenticated:
     return redirect('login')

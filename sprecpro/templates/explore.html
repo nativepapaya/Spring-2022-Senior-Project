@@ -133,17 +133,16 @@
 
       <!--Infinite scroll -->
       {% if posts.has_next %}
-      <a class="infinite-more-link" href="?page={{ posts.next_page_number }}">More</a>
+        <a class="infinite-more-link" href="?page={{ posts.next_page_number }}">More</a>
       {% endif %}
 
       <script>
           var infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0]
           });
-        </script>
+      </script>
     </div>
-
-
+    
     <!--Recommended users-->
     <div class="col-2 bg-dark text-white">
         <p>Recommended users:</p>

@@ -12,8 +12,7 @@
     {% endfor %}
   {% endif %}
 
-  <div class="container py-2 border">
-    <a class="btn btn-primary" href="{% url 'post.create' %}">Create Post</a>
+  <div class="container py-2">
     {% if posts %}
       {% for post in posts %}
         {% isFollowedBy post.profile user as following %}
@@ -89,6 +88,8 @@
         <br/>
         {% endif %}
       {% endfor %}
+    {% else %}
+      <span>No posts to show. Follow some users!</span>
     {% endif %}
   </div>
 {% endblock %}
