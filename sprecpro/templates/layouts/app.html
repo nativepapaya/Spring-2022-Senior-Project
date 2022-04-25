@@ -122,18 +122,25 @@
         </ul>
       </div>
     </nav>
+
+    {% if user.is_authenticated and not user.is_staff %}
+      <style>
+        body {
+          background: linear-gradient(90deg, #1db9549c 34%, rgba(240, 137, 250, 0.603) 96%);
+        }
+      </style>
+    {% else %}
+      <style>
+        body {
+          background: linear-gradient(90deg, hsla(203, 35%, 56%, 0.9) 15%, hsla(295, 92%, 76%, 0.9) 85%);
+        }
+  
+        /*h5 {
+        -webkit-text-stroke: 0.2px #1c9646;
+        }*/
+      </style>
+    {% endif %}
   {% block content %}
     
   {% endblock %}
 </body>
-
-<style>
-  /*body {
-    /* background: linear-gradient(90deg, hsla(203, 35%, 56%, 1) 34%, hsla(295, 92%, 76%, 1) 96%);
-    background: linear-gradient(90deg, #1DB954 10%, hsla(295, 92%, 76%, 1) 96%);
-  }
-
-  h5 {
-  -webkit-text-stroke: 0.2px #1c9646;
-  }*/
-</style>
