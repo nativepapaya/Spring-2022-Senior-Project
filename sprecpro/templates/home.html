@@ -12,7 +12,7 @@
     {% endfor %}
   {% endif %}
 
-  <div class="container py-2">
+  <div class="container py-2 border">
     <a class="btn btn-primary" href="{% url 'post.create' %}">Create Post</a>
     {% if posts %}
       {% for post in posts %}
@@ -53,26 +53,35 @@
               </div>
               <hr>
               <div class="card-subtitle d-flex flex-row mt-1 mb-3 mx-1">
+                {% if user.is_anonymous %}
+                <span style="margin:0px 0px 10px 10px">
+                  <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button> 
+                  </form>
+                </span>
+                {% else %}
                   {% isLiked post user as liked %}
-                  <span class="ml-2">
+                  <span style="margin:0px 0px 10px 10px">
                   {% if liked %}
-                      <form action="{% url 'unlike_post' post.pk %}" method="POST">
+                    <form action="{% url 'unlike_post' post.pk %}" method="POST">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.path }}">
                       <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
-                      </form>
+                    </form>
                   {% else %}
-                      <form action="{% url 'like_post' post.pk %}" method="POST">
+                    <form action="{% url 'like_post' post.pk %}" method="POST">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.path }}">
                       <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button>
-                      </form>
+                    </form>
                   {% endif %}
                   </span>
+                {% endif %}  
                   <form action="{% url 'post.view' post.pk %}">
                     <button type="submit" class="btn btn-secondary ml-2">View Post</button>
                   </form> 
-                  <button class="btn btn-secondary ml-2">Share</button>
               </div>
             </div>
           </div>

@@ -95,7 +95,7 @@
                   <form action="{% url 'login' %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}"><b>{% getLikes post %} Like</b></button> 
+                    <button type="submit" class="btn btn-primary" name="post_id" value="{{ post.id }}">{% getLikes post %} Like</button> 
                   </form>
                 </span>
               {% else %}
@@ -124,7 +124,6 @@
                 <input type="hidden" name="song_name" value=""></input>
                 <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">Favorite Song</button>
               </form> 
-              <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
             </div>
           </div>
         </div>

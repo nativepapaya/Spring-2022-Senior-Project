@@ -214,7 +214,7 @@
                             <span class="ml-2">
                                 <form action="{% url 'login' %}" method="POST">
                                   {% csrf_token %}
-                                  <button type="submit" class="btn btn-primary"><b>{% getLikes post %} Like</b></button> 
+                                  <button type="submit" class="btn btn-primary">{% getLikes post %} Like</button> 
                                 </form>
                             </span>
                             {% else %}
@@ -238,7 +238,6 @@
                             <form action="{% url 'post.view' post.pk %}">
                               <button type="submit" class="btn btn-secondary ml-2">View Post</button>
                             </form> 
-                            <button class="btn btn-secondary ml-2">Share</button>
                         </div>
                       </div>
                     </div>
