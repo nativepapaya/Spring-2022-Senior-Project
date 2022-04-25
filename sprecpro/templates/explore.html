@@ -72,7 +72,6 @@
                 <input type="hidden" name="song_name" value=""></input>
                 <button type="submit" class="btn btn-secondary" style="margin:0px 0px 10px 10px">Favorite Song</button>
               </form> 
-              <button class="btn btn-secondary" style="margin:0px 0px 10px 10px">Share</button>
             </div>
           </div>
         </div>
@@ -82,17 +81,16 @@
 
       <!--Infinite scroll -->
       {% if posts.has_next %}
-      <a class="infinite-more-link" href="?page={{ posts.next_page_number }}">More</a>
+        <a class="infinite-more-link" href="?page={{ posts.next_page_number }}">More</a>
       {% endif %}
 
       <script>
           var infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0]
           });
-        </script>
+      </script>
     </div>
-
-
+    
     <!--Recommended users-->
     <div class="col-2 bg-dark text-white">
         <p>Recommended users:</p>
