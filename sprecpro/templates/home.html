@@ -13,7 +13,6 @@
   {% endif %}
 
   <div class="container py-2">
-    <a class="btn btn-primary" href="{% url 'post.create' %}">Create Post</a>
     {% if posts %}
       {% for post in posts %}
         {% isFollowedBy post.profile user as following %}
@@ -72,7 +71,6 @@
                   <form action="{% url 'post.view' post.pk %}">
                     <button type="submit" class="btn btn-secondary ml-2">View Post</button>
                   </form> 
-                  <button class="btn btn-secondary ml-2">Share</button>
               </div>
             </div>
           </div>
@@ -80,6 +78,8 @@
         <br/>
         {% endif %}
       {% endfor %}
+    {% else %}
+      <span>No posts to show. Follow some users!</span>
     {% endif %}
   </div>
 {% endblock %}

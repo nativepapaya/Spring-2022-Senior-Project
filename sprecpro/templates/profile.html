@@ -138,6 +138,8 @@
                   <iframe src="https://open.spotify.com/embed/track/{{top_song_id}}" 
                     width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
+                {% else %}
+                  <span>No top song to display</span>
                   </iframe>
                 {% endif %}
               </div>
@@ -153,6 +155,8 @@
                     width="400" height="80" frameborder="0" allowtransparency="true" 
                     allow="encrypted-media">
                   </iframe>
+                {% else %}
+                  <span>No last played to display</span>
                 {% endif %}
               </div>
             </div>
@@ -222,7 +226,6 @@
                             <form action="{% url 'post.view' post.pk %}">
                               <button type="submit" class="btn btn-secondary ml-2">View Post</button>
                             </form> 
-                            <button class="btn btn-secondary ml-2">Share</button>
                         </div>
                       </div>
                     </div>

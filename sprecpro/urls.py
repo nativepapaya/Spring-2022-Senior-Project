@@ -8,8 +8,6 @@ urlpatterns = [
   path('explore', views.explore, name='explore'),
 
   path('login/', views.login, name='login'),
-  path('register/', views.register, name='register'),
-
   path('profile/<user_id>', views.profile, name='profile'),
   path('profile/<user_id>/edit', views.editpr, name='editpr'),
   path('profile/<user_id>/update', views.updateProfile, name="updateProfile"),
@@ -21,7 +19,6 @@ urlpatterns = [
   path('favorites/searchFor', views.searchForFavorites, name='search_for_favorites'),
   path('fav/', views.addToFavorites, name='add_fav'),
   path('nofav/<id>', views.deleteFromFavorites, name='delete_fav'),
-  #path('isfavorited/<id>', views.isFavorited, name='is_favorited'),
 
   path('post/create', views.createPost, name='post.create'),
   path('post/create/search', views.searchSpotify, name='post.create.search'),
